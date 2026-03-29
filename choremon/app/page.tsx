@@ -12,6 +12,9 @@ import { getStats, getActiveQuests, hasOnboarded, setOnboarded } from '@/lib/sto
 import { RASCAL_GREETINGS } from '@/lib/constants';
 import { PlayerStats, ActiveQuest } from '@/lib/types';
 import { resumeAudio, playButtonTap } from '@/lib/sounds';
+import { rascalSpeak } from '@/lib/rascalSpeak';
+
+let globalAudioUnlocked = false;
 
 export default function HomePage() {
   const [stats, setStats] = useState<PlayerStats | null>(null);
@@ -67,8 +70,28 @@ export default function HomePage() {
 
     // Trigger typewriter on mount
     const cleanup = startTypewriter();
-    return cleanup;
-  }, [startTypewriter]);
+    
+    // Trigger TTS for this specific bubble text
+    if (!globalAudioUnlocked) {
+      const unlockAudio = () => {
+        globalAudioUnlocked = true;
+        rascalSpeak(greeting);
+        window.removeEventListener('click', unlockAudio);
+        window.removeEventListener('touchstart', unlockAudio);
+      };
+      window.addEventListener('click', unlockAudio);
+      window.addEventListener('touchstart', unlockAudio);
+      return () => {
+        cleanup();
+        window.removeEventListener('click', unlockAudio);
+        window.removeEventListener('touchstart', unlockAudio);
+      };
+    } else {
+      // Audio already unlocked (i.e. user navigated back here), play instantly
+      rascalSpeak(greeting);
+      return cleanup;
+    }
+  }, [startTypewriter, greeting]);
 
   const handleOnboardingNext = () => {
     resumeAudio();

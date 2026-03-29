@@ -12,7 +12,7 @@ async function main() {
     })
   });
   console.log(res.status);
-  const data = await res.json();
-  console.log(data?.detail?.status || data?.detail?.message);
+  const data = await res.text();
+  console.log(data);
 }
 main();

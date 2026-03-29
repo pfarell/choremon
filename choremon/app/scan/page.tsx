@@ -19,20 +19,27 @@ export default function ScanPage() {
     if (!selected) return;
     playButtonTap();
 
-    // Vacuum & Mop — no AI needed, go straight to Now/Later confirm
-    if (selected === 'vacuum' || selected === 'mop') {
+    // Vacuum, Mop & Laundry — no AI camera needed, go straight to Now/Later confirm
+    if (selected === 'vacuum' || selected === 'mop' || selected === 'laundry') {
       setShowConfirm(true);
       return;
     }
 
-    // Trash & Laundry — use AI scan first, then Now/Later on result page
+    // Trash — use AI scan first, then Now/Later on result page
     router.push(`/scan/analyze?type=${selected}`);
   };
 
   const handleNow = () => {
     if (!selected) return;
     playButtonTap();
-    // Vacuum & Mop go to AR mode
+    
+    // Laundry goes to static Live Quest mode
+    if (selected === 'laundry') {
+      router.push(`/quest/live?choreType=${selected}`);
+      return;
+    }
+    
+    // Vacuum & Mop go to AR Canvas mode
     window.location.href = `/ar.html?choreType=${selected}`;
   };
 

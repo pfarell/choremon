@@ -11,6 +11,13 @@ const LINES = {
     "[exasperated] I've been watching this for twenty minutes. TWENTY.",
     "[impressed, reluctantly] Okay. That was... not terrible. Don't let it go to your head.",
   ],
+  trash: [
+    "[disgusted] I count multiple items on the floor. We have a trash can. It's RIGHT THERE.",
+    "[sighs heavily] Plastic bottles. On the floor. This is not a landfill.",
+    "[deadpan] This is either a chore or a crime scene. I'm not sure which.",
+    "[sarcastic] Oh look, a wrapper. And another one. Collecting them, are we?",
+    "[annoyed] The trash can is literally right there. LITERALLY.",
+  ],
   dishes: [
     "[disgusted] Those dishes have been sitting there since Tuesday. I counted. I gagged.",
     "[sighs heavily] You missed a spot. The OTHER one. Unbelievable.",

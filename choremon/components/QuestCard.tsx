@@ -24,7 +24,11 @@ export default function QuestCard({ quest }: QuestCardProps) {
 
   return (
     <Link
-      href={`/quest/live?questId=${quest.id}`}
+      href={
+        quest.choreType === 'mop' || quest.choreType === 'vacuum' 
+        ? `/ar.html?choreType=${quest.choreType}&questId=${quest.id}` 
+        : `/quest/live?choreType=${quest.choreType}&questId=${quest.id}`
+      }
       className="card flex items-center gap-3 animate-slide-up"
     >
       <span className="text-3xl">{choreInfo?.emoji ?? '🧹'}</span>

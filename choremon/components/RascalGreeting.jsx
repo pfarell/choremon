@@ -8,8 +8,25 @@ export default function RascalGreeting() {
 
   useEffect(() => {
     if (fired.current) return;
-    fired.current = true;
-    setTimeout(() => rascalSpeak(getRandomLine("greeting")), 1200);
+    
+    // Most browsers block audio until the user interacts with the page (Autoplay Policy).
+    // We wait for the *first* click or touch, then play the greeting.
+    const unlockAudio = () => {
+      if (fired.current) return;
+      fired.current = true;
+      rascalSpeak(getRandomLine("greeting"));
+      
+      window.removeEventListener('click', unlockAudio);
+      window.removeEventListener('touchstart', unlockAudio);
+    };
+
+    window.addEventListener('click', unlockAudio);
+    window.addEventListener('touchstart', unlockAudio);
+
+    return () => {
+      window.removeEventListener('click', unlockAudio);
+      window.removeEventListener('touchstart', unlockAudio);
+    };
   }, []);
 
   return null;

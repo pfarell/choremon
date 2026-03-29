@@ -1,6 +1,6 @@
 import { ElevenLabsClient } from "elevenlabs";
 
-const ELEVENLABS_API_KEY = "sk_REDACTED_ELEVENLABS_KEY";
+const ELEVENLABS_API_KEY = "REDACTED_ELEVENLABS_KEY";
 const ELEVENLABS_VOICE_ID = "vBKc2FfBKJfcZNyEt1n6";
 
 const client = new ElevenLabsClient({ apiKey: ELEVENLABS_API_KEY });
@@ -11,7 +11,7 @@ export async function POST(req) {
 
     const audioStream = await client.textToSpeech.convert(ELEVENLABS_VOICE_ID, {
       text,
-      model_id: "eleven_v3",
+      model_id: "eleven_multilingual_v2",
       voice_settings: {
         stability: 0.35,
         similarity_boost: 0.75,

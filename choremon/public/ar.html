@@ -226,7 +226,9 @@ document.getElementById('fb').onclick = function() {
 
 function showRoast() {
   const roasts = RO[CT] || RO.vacuum;
-  document.getElementById('roast-msg').textContent = roasts[Math.floor(Math.random() * roasts.length)];
+  const roastText = roasts[Math.floor(Math.random() * roasts.length)];
+  document.getElementById('roast-msg').textContent = roastText;
+  
   const el = document.getElementById('roast-overlay');
   el.classList.add('show');
   setTimeout(() => el.classList.remove('show'), 3500);

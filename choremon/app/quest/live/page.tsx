@@ -6,7 +6,9 @@ import Rascal from '@/components/Rascal';
 import { CHORE_TYPES } from '@/lib/constants';
 import { ChoreType, RascalExpression } from '@/lib/types';
 import { playCoinCollect, playQuestComplete, playButtonTap } from '@/lib/sounds';
-import { useRascalChatter } from '@/hooks/useRascalChatter';
+import { removeActiveQuest } from '@/lib/storage';
+import TrashChore from '@/components/TrashChore';
+import LaundryChore from '@/components/LaundryChore';
 
 // ===== Sound effects =====
 function playDismissSound() {
@@ -218,9 +220,6 @@ function LiveQuestContent() {
   const choreInfo = CHORE_TYPES.find((c: { id: string }) => c.id === choreType);
   const choreLabel = choreType === 'laundry' ? 'laundry' : 'trash';
 
-  // Rascal TTS chatter during active cleaning
-  useRascalChatter({ choreType, isActive: phase === 'cleaning' });
-
   // Sync state → refs
   useEffect(() => { itemsRef.current = items; }, [items]);
 
@@ -256,6 +255,11 @@ function LiveQuestContent() {
     if (streamRef.current) streamRef.current.getTracks().forEach(t => t.stop());
     if (timerRef.current) clearInterval(timerRef.current);
     if (pollRef.current) clearInterval(pollRef.current);
+
+    const questId = searchParams.get('questId');
+    if (questId) {
+      removeActiveQuest(questId);
+    }
 
     const currentItems = itemsRef.current;
     const cleanedCount = currentItems.filter(i => i.cleaned).length;
@@ -890,6 +894,40 @@ function LiveQuestContent() {
   );
 }
 
+function LiveQuestRouter() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const choreType = (searchParams.get('choreType') as ChoreType) || 'trash';
+  const questId = searchParams.get('questId');
+  const startTime = useRef(Date.now());
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleComplete = (stats: any) => {
+    if (questId) {
+      removeActiveQuest(questId);
+    }
+    const timeSeconds = Math.floor((Date.now() - startTime.current) / 1000);
+    localStorage.setItem('choremon-last-quest', JSON.stringify({
+      choreType,
+      coinsCollected: stats.coinsCollected,
+      totalCoins: stats.totalCoins,
+      xpEarned: stats.xpEarned,
+      timeSeconds,
+    }));
+    router.push('/quest/complete');
+  };
+
+  if (choreType === 'trash') {
+    return <TrashChore onComplete={handleComplete} onXPEarned={() => {}} />;
+  }
+
+  if (choreType === 'laundry') {
+    return <LaundryChore onComplete={handleComplete} onXPEarned={() => {}} />;
+  }
+
+  return <LiveQuestContent />;
+}
+
 export default function LiveQuestPage() {
   return (
     <Suspense
@@ -899,7 +937,7 @@ export default function LiveQuestPage() {
         </div>
       }
     >
-      <LiveQuestContent />
+      <LiveQuestRouter />
     </Suspense>
   );
 }
