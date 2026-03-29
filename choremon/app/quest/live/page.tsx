@@ -10,7 +10,6 @@ import { removeActiveQuest } from '@/lib/storage';
 import TrashChore from '@/components/TrashChore';
 import LaundryChore from '@/components/LaundryChore';
 
-// ===== Sound effects =====
 function playDismissSound() {
   try {
     const ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
@@ -26,10 +25,9 @@ function playDismissSound() {
     gain.connect(ctx.destination);
     osc.start(now);
     osc.stop(now + 0.15);
-  } catch { /* silence */ }
+  } catch 
 }
 
-// ===== COCO-SSD Category Mappings =====
 const TRASH_CLASSES = new Set([
   'bottle', 'wine glass', 'cup', 'fork', 'knife', 'spoon', 'bowl',
   'banana', 'apple', 'sandwich', 'orange', 'broccoli', 'carrot',
@@ -45,7 +43,6 @@ const LAUNDRY_CLASSES = new Set([
   'fork', 'knife', 'spoon', 'bowl', 'wine glass',
 ]);
 
-// ===== Tracked item =====
 interface TrackedItem {
   id: string;
   name: string;
@@ -67,7 +64,6 @@ interface XPPopup {
   y: number;
 }
 
-// ===== Rascal dialogue pools =====
 const SCAN_ROASTS: Record<string, string[]> = {
   trash: [
     "Bro the trash can is RIGHT THERE 🦝",
@@ -123,7 +119,6 @@ const MANUAL_CLEAN_REACTIONS = [
   (name: string, xp: number) => `That ${name} never stood a chance! +${xp}! ⚡`,
 ];
 
-// Helper to pick random from array
 let lastIndices: Record<string, number> = {};
 function pickRandom<T>(arr: T[], pool: string): T {
   let idx = Math.floor(Math.random() * arr.length);
@@ -134,7 +129,6 @@ function pickRandom<T>(arr: T[], pool: string): T {
   return arr[idx];
 }
 
-// Prettify COCO class name for display
 function prettifyClassName(cls: string): string {
   const names: Record<string, string> = {
     'bottle': '🍾 Bottle',
@@ -188,7 +182,6 @@ function LiveQuestContent() {
   const searchParams = useSearchParams();
   const choreType = (searchParams.get('choreType') as ChoreType) || 'trash';
 
-  // === Refs ===
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -200,10 +193,8 @@ function LiveQuestContent() {
   const isFirstScan = useRef(true);
   const firstScanClasses = useRef<Map<string, number> | null>(null);
   const scanningRef = useRef(false);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const modelRef = useRef<any>(null);
 
-  // === State ===
   const [phase, setPhase] = useState<Phase>('scanning');
   const [modelReady, setModelReady] = useState(false);
   const [items, setItems] = useState<TrackedItem[]>([]);
@@ -220,17 +211,14 @@ function LiveQuestContent() {
   const choreInfo = CHORE_TYPES.find((c: { id: string }) => c.id === choreType);
   const choreLabel = choreType === 'laundry' ? 'laundry' : 'trash';
 
-  // Sync state → refs
   useEffect(() => { itemsRef.current = items; }, [items]);
 
-  // ===== Bounce Rascal =====
   const bounceRascal = useCallback((msg: string) => {
     setRascalMessage(msg);
     setRascalBounce(true);
     setTimeout(() => setRascalBounce(false), 600);
   }, []);
 
-  // ===== Show XP popup =====
   const showXPPopup = useCallback((xp: number) => {
     const popupId = ++popupIdRef.current;
     setXpPopups(prev => [...prev, {
@@ -243,14 +231,12 @@ function LiveQuestContent() {
     }, 1500);
   }, []);
 
-  // ===== Timer =====
   useEffect(() => {
     if (phase !== 'cleaning') return;
     timerRef.current = setInterval(() => setSeconds(s => s + 1), 1000);
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
   }, [phase]);
 
-  // ===== Finish Quest =====
   const finishQuest = useCallback(() => {
     if (streamRef.current) streamRef.current.getTracks().forEach(t => t.stop());
     if (timerRef.current) clearInterval(timerRef.current);
@@ -276,7 +262,6 @@ function LiveQuestContent() {
     router.push('/quest/complete');
   }, [choreType, seconds, router]);
 
-  // ===== Core: Real-time COCO-SSD detection =====
   const scanFrame = useCallback(async () => {
     if (scanningRef.current || !modelRef.current) return;
     scanningRef.current = true;
@@ -285,24 +270,18 @@ function LiveQuestContent() {
       const video = videoRef.current;
       if (!video || video.paused || video.readyState < 2) return;
 
-      // Run COCO-SSD on the video element directly
       const predictions = await modelRef.current.detect(video);
 
-      // Filter by category + confidence
       const categoryClasses = choreType === 'laundry' ? LAUNDRY_CLASSES : TRASH_CLASSES;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const relevant = predictions.filter((p: any) =>
         p.score > 0.4 && categoryClasses.has(p.class)
       );
 
-      // Group by class name and count
       const classCounts = new Map<string, number>();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       for (const p of relevant) {
         classCounts.set(p.class, (classCounts.get(p.class) || 0) + 1);
       }
 
-      // Build display names
       const currentItems: { name: string; baseClass: string }[] = [];
       Array.from(classCounts.entries()).forEach(([cls, count]) => {
         const pretty = prettifyClassName(cls);
@@ -317,17 +296,14 @@ function LiveQuestContent() {
 
       setPollCount(c => c + 1);
 
-      // ---- FIRST SCAN: establish item list with confirmation ----
       if (isFirstScan.current) {
         if (currentItems.length === 0) return;
 
-        // First time seeing items — store class counts but DON'T commit yet
         if (!firstScanClasses.current) {
           firstScanClasses.current = new Map(classCounts);
-          return; // Wait for second scan to confirm
+          return; 
         }
 
-        // Second scan — only keep classes that appear in BOTH scans
         const confirmedClasses = new Map<string, number>();
         Array.from(classCounts.entries()).forEach(([cls, count]) => {
           const prevCount = firstScanClasses.current!.get(cls);
@@ -337,14 +313,13 @@ function LiveQuestContent() {
         });
 
         if (confirmedClasses.size === 0) {
-          firstScanClasses.current = new Map(classCounts); // Try again
+          firstScanClasses.current = new Map(classCounts); 
           return;
         }
 
         isFirstScan.current = false;
         firstScanClasses.current = null;
 
-        // Build confirmed items list
         const confirmedItems: { name: string; baseClass: string }[] = [];
         Array.from(confirmedClasses.entries()).forEach(([cls, count]) => {
           const pretty = prettifyClassName(cls);
@@ -361,7 +336,7 @@ function LiveQuestContent() {
           id: `item-${i}-${Date.now()}`,
           name: item.name,
           baseClass: item.baseClass,
-          xp: 10 + Math.floor(Math.random() * 21), // 10-30 XP
+          xp: 10 + Math.floor(Math.random() * 21), 
           cleaned: false,
           dismissed: false,
           missCount: 0,
@@ -372,22 +347,18 @@ function LiveQuestContent() {
         itemsRef.current = trackedItems;
         setItems(trackedItems);
 
-        // Show roast
         const roasts = SCAN_ROASTS[choreType] || SCAN_ROASTS.trash;
         bounceRascal(pickRandom(roasts, 'roast'));
 
-        // Transition to cleaning phase
         setTimeout(() => setPhase('cleaning'), 2500);
         return;
       }
 
-      // ---- SUBSEQUENT SCANS: class-count-based diff ----
       const prevItems = itemsRef.current;
       let changed = false;
       let newXP = 0;
       const cleanedNames: { name: string; xp: number }[] = [];
 
-      // Group active tracked items by base class
       const activeByClass = new Map<string, TrackedItem[]>();
       for (const item of prevItems) {
         if (item.cleaned || item.dismissed) continue;
@@ -396,13 +367,11 @@ function LiveQuestContent() {
         activeByClass.get(cls)!.push(item);
       }
 
-      // Determine which items are missing
       const missingItemIds = new Set<string>();
       Array.from(activeByClass.entries()).forEach(([cls, activeItems]) => {
         const detectedCount = classCounts.get(cls) || 0;
-        if (detectedCount >= activeItems.length) return; // all visible
+        if (detectedCount >= activeItems.length) return; 
 
-        // Sort by missCount desc — items already tracked as missing get priority
         const sorted = [...activeItems].sort((a, b) => b.missCount - a.missCount);
         const missingCount = activeItems.length - detectedCount;
         for (let i = 0; i < missingCount; i++) {
@@ -410,14 +379,12 @@ function LiveQuestContent() {
         }
       });
 
-      // Update all items
       const updatedItems = prevItems.map(item => {
         if (item.cleaned || item.dismissed) return { ...item, justCleaned: false };
 
         if (missingItemIds.has(item.id)) {
           const newMissCount = item.missCount + 1;
           if (newMissCount >= 4) {
-            // CONFIRMED GONE — award XP
             changed = true;
             newXP += item.xp;
             cleanedNames.push({ name: item.name, xp: item.xp });
@@ -445,14 +412,12 @@ function LiveQuestContent() {
           bounceRascal(fn(c.name, c.xp));
         });
 
-        // Clear justCleaned after animation
         setTimeout(() => {
           const cleared = itemsRef.current.map(i => ({ ...i, justCleaned: false }));
           itemsRef.current = cleared;
           setItems(cleared);
         }, 1200);
 
-        // Check if all done
         const activeRemaining = updatedItems.filter(i => !i.cleaned && !i.dismissed).length;
         if (activeRemaining === 0 && !allDoneHandledRef.current) {
           allDoneHandledRef.current = true;
@@ -473,12 +438,10 @@ function LiveQuestContent() {
     }
   }, [choreType, bounceRascal, showXPPopup, finishQuest]);
 
-  // ===== SETUP: Camera + COCO-SSD Model =====
   useEffect(() => {
     let cancelled = false;
 
     async function setup() {
-      // 1. Start camera
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
           video: { facingMode: 'environment', width: { ideal: 640 }, height: { ideal: 480 } }
@@ -494,7 +457,6 @@ function LiveQuestContent() {
         return;
       }
 
-      // 2. Load COCO-SSD model
       try {
         await import('@tensorflow/tfjs');
         const cocoSsd = await import('@tensorflow-models/coco-ssd');
@@ -507,7 +469,6 @@ function LiveQuestContent() {
         setModelReady(true);
         setRascalMessage("Rascal is scanning your room... 🦝");
 
-        // Start detection loop
         setTimeout(() => {
           scanFrame();
           pollRef.current = setInterval(scanFrame, 800);
@@ -525,9 +486,8 @@ function LiveQuestContent() {
       if (streamRef.current) streamRef.current.getTracks().forEach(t => t.stop());
       if (pollRef.current) clearInterval(pollRef.current);
     };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []); 
 
-  // ===== Dismiss item =====
   const handleDismiss = useCallback((itemId: string) => {
     const item = itemsRef.current.find(i => i.id === itemId);
     if (!item) return;
@@ -535,7 +495,6 @@ function LiveQuestContent() {
     playDismissSound();
     bounceRascal(pickRandom(DISMISS_REACTIONS, 'dismiss')(item.name));
 
-    // Slide out animation
     const updated = itemsRef.current.map(i =>
       i.id === itemId ? { ...i, slidingOut: true } : i
     );
@@ -560,7 +519,6 @@ function LiveQuestContent() {
     }, 400);
   }, [bounceRascal, finishQuest]);
 
-  // ===== Manual clean =====
   const handleManualClean = useCallback((itemId: string) => {
     const item = itemsRef.current.find(i => i.id === itemId);
     if (!item) return;
@@ -597,13 +555,11 @@ function LiveQuestContent() {
     }
   }, [bounceRascal, showXPPopup, finishQuest]);
 
-  // ===== Toggle item expanded =====
   const handleItemTap = (itemId: string) => {
     playButtonTap();
     setExpandedItemId(prev => prev === itemId ? null : itemId);
   };
 
-  // ===== Retry =====
   const handleRetry = () => {
     setScanError('');
     setPhase('scanning');
@@ -612,14 +568,12 @@ function LiveQuestContent() {
     setRascalMessage("Loading AI vision model... 🧠");
   };
 
-  // ===== Format time =====
   const formatTime = (s: number) => {
     const min = Math.floor(s / 60).toString().padStart(2, '0');
     const sec = (s % 60).toString().padStart(2, '0');
     return `${min}:${sec}`;
   };
 
-  // ===== Computed =====
   const activeItems = items.filter(i => !i.dismissed);
   const totalActive = activeItems.length;
   const cleanedCount = activeItems.filter(i => i.cleaned).length;
@@ -628,7 +582,6 @@ function LiveQuestContent() {
   const remainingCount = totalActive - cleanedCount;
   const visibleItems = items.filter(i => !i.dismissed);
 
-  // Rascal expression
   let rascalExpr: RascalExpression = 'thinking';
   if (phase === 'scanning') rascalExpr = 'thinking';
   else if (progress === 0) rascalExpr = 'disappointed';
@@ -638,14 +591,12 @@ function LiveQuestContent() {
 
   return (
     <div className="fixed inset-0 bg-black overflow-hidden select-none">
-      {/* Camera feed */}
       <video
         ref={videoRef}
         className="absolute inset-0 w-full h-full object-cover"
         playsInline muted autoPlay
       />
 
-      {/* PHASE 1: Scanning overlay */}
       {phase === 'scanning' && !scanError && (
         <div className="absolute inset-0 z-40">
           <div className="scan-line" />
@@ -677,7 +628,6 @@ function LiveQuestContent() {
             </div>
           </div>
 
-          {/* Item discovery overlay */}
           {items.length > 0 && (
             <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center z-50 px-4">
               <div className="frosted rounded-2xl p-5 max-w-sm w-full animate-bounce-in">
@@ -705,7 +655,6 @@ function LiveQuestContent() {
         </div>
       )}
 
-      {/* Scan Error */}
       {scanError && (
         <div className="absolute inset-0 z-50 bg-black/60 flex items-center justify-center px-4">
           <div className="frosted rounded-2xl p-6 max-w-sm w-full text-center animate-bounce-in">
@@ -716,10 +665,8 @@ function LiveQuestContent() {
         </div>
       )}
 
-      {/* PHASE 2: LIVE CLEANING MODE */}
       {phase === 'cleaning' && (
         <>
-          {/* Top HUD */}
           <div className="absolute top-0 left-0 right-0 z-30">
             <div className="frosted px-4 py-3 border-b border-white/10">
               <div className="flex items-center justify-between mb-2">
@@ -752,7 +699,6 @@ function LiveQuestContent() {
             </div>
           </div>
 
-          {/* Item checklist */}
           <div className="absolute top-[110px] right-2 z-30 flex flex-col gap-1.5 max-h-[50vh] overflow-y-auto no-scrollbar w-[200px]">
             {visibleItems.map(item => (
               <div
@@ -811,7 +757,6 @@ function LiveQuestContent() {
             ))}
           </div>
 
-          {/* Tracking indicator */}
           {pollCount > 0 && (
             <div className="absolute top-[110px] left-3 z-30">
               <div className="bg-black/40 rounded-lg px-2.5 py-1.5 flex items-center gap-1.5"
@@ -824,7 +769,6 @@ function LiveQuestContent() {
             </div>
           )}
 
-          {/* XP Popups */}
           {xpPopups.map(popup => (
             <div
               key={popup.id}
@@ -835,7 +779,6 @@ function LiveQuestContent() {
             </div>
           ))}
 
-          {/* Bottom HUD */}
           <div className="absolute bottom-0 left-0 right-0 z-30 p-3">
             <div className="frosted rounded-2xl p-3 border border-white/10">
               <div className={`flex items-center gap-3 mb-2 transition-transform ${rascalBounce ? 'scale-105' : 'scale-100'}`}>
@@ -901,7 +844,6 @@ function LiveQuestRouter() {
   const questId = searchParams.get('questId');
   const startTime = useRef(Date.now());
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleComplete = (stats: any) => {
     if (questId) {
       removeActiveQuest(questId);
