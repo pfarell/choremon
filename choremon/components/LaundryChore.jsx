@@ -27,9 +27,6 @@ export default function LaundryChore({ onXPEarned, onComplete }) {
   const [completedSteps, setCompletedSteps] = useState(new Set());
   const [totalXP, setTotalXP] = useState(0);
 
-  // useRascalChatter only active once you start doing steps (size > 0), 
-  // but wait... `useRascalChatter` is an existing hook in the project to periodically speak
-  // The prompt asked to import it, so we'll do it exactly as instructed.
   useRascalChatter({ choreType: "laundry", isActive: completedSteps.size > 0 });
 
   const completeStep = (step) => {
