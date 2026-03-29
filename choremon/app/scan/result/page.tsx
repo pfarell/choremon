@@ -34,7 +34,6 @@ export default function ResultPage() {
 
   const handleNow = () => {
     playButtonTap();
-    // Trash & Laundry → live mode, Vacuum & Mop → AR mode
     if (choreType === 'trash' || choreType === 'laundry') {
       router.push(`/quest/live?choreType=${choreType}`);
     } else {
