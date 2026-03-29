@@ -7,7 +7,8 @@ Choremon is a gamified household chores app that uses AI to detect messes, gener
 Built in 44 hours at Hack Indy 2026.
 
 🌐 **Live Demo**: [choremon-six.vercel.app](https://choremon-six.vercel.app)
-
+📝 **Devpost**: [devpost.com/software/choremon](https://choremon-six.vercel.app)
+🎥 **Video Pitch**: [Choremon Pitch Video](https://youtu.be/QNTnY8eavig)
 ---
 
 ## ✨ Features
