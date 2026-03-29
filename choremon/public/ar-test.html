@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>AR TEST</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:monospace;overflow:hidden;background:#000;position:fixed;width:100%;height:100%}
+    #info{position:fixed;top:0;left:0;right:0;z-index:9999;background:rgba(0,0,0,.8);color:#0f0;padding:8px 12px;font-size:11px;line-height:1.6;white-space:pre;pointer-events:none}
+    #start{position:fixed;inset:0;z-index:500;background:#222;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px}
+    #start h1{color:#fff;font-size:24px}
+    #start p{color:#aaa;font-size:14px;text-align:center;max-width:280px}
+    #go{background:#58CC02;color:#fff;border:none;border-radius:12px;padding:16px 40px;font-size:18px;font-weight:bold;cursor:pointer}
+    #overlay{position:fixed;top:0;left:0;width:100%;height:100%;z-index:10;pointer-events:none}
+  </style>
+</head>
+<body>
+
+<div id="info">LOADING...</div>
+
+<div id="start">
+  <h1>🧪 AR TEST</h1>
+  <p>This test places ONE red cube on the floor. If the cube stays in place when you walk, AR works.</p>
+  <button id="go">START AR TEST</button>
+  <p id="err" style="color:red"></p>
+</div>
+
+<div id="overlay"></div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.162.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.162.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+
+const info = document.getElementById('info');
+function log(msg) {
+  info.textContent = msg;
+  console.log(msg);
+}
+
+// Check support
+let supported = false;
+if (navigator.xr) {
+  try {
+    supported = await navigator.xr.isSessionSupported('immersive-ar');
+  } catch(e) {}
+}
+
+if (!supported) {
+  log('❌ WebXR immersive-ar NOT SUPPORTED on this device/browser');
+  document.getElementById('err').textContent = 'WebXR AR not supported. Need Android Chrome with ARCore.';
+  document.getElementById('go').disabled = true;
+  document.getElementById('go').style.background = '#888';
+} else {
+  log('✅ WebXR immersive-ar IS SUPPORTED\nTap START to begin');
+}
+
+document.getElementById('go').onclick = async () => {
+  if (!supported) return;
+
+  try {
+    log('Requesting AR session...');
+
+    // === RENDERER ===
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.xr.enabled = true;
+    document.body.prepend(renderer.domElement);
+    renderer.domElement.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:0';
+
+    // === SCENE ===
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 20);
+
+    // Light
+    scene.add(new THREE.AmbientLight(0xffffff, 1));
+    scene.add(new THREE.DirectionalLight(0xffffff, 0.8));
+
+    // === RED CUBE — 20cm, sitting on the floor ===
+    const cube = new THREE.Mesh(
+      new THREE.BoxGeometry(0.2, 0.2, 0.2),
+      new THREE.MeshStandardMaterial({ color: 0xff0000 })
+    );
+    // Place it 1 meter in front of starting position, on the floor
+    // In local-floor space, Y=0 is the floor
+    cube.position.set(0, 0.1, -1); // 10cm up (half the cube height) so it sits ON the floor
+    scene.add(cube);
+
+    // === GREEN CUBE — at a different position ===
+    const cube2 = new THREE.Mesh(
+      new THREE.BoxGeometry(0.2, 0.2, 0.2),
+      new THREE.MeshStandardMaterial({ color: 0x00ff00 })
+    );
+    cube2.position.set(0.5, 0.1, -1.5);
+    scene.add(cube2);
+
+    // === BLUE CUBE — another position ===
+    const cube3 = new THREE.Mesh(
+      new THREE.BoxGeometry(0.2, 0.2, 0.2),
+      new THREE.MeshStandardMaterial({ color: 0x0088ff })
+    );
+    cube3.position.set(-0.7, 0.1, -0.8);
+    scene.add(cube3);
+
+    // === YELLOW FLAT COIN on floor ===
+    const coin = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.15, 0.15, 0.02, 32),
+      new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.8, roughness: 0.2 })
+    );
+    coin.rotation.x = Math.PI / 2;
+    coin.position.set(0, 0.01, -0.7);
+    scene.add(coin);
+
+    // === FLOOR GRID for reference ===
+    const grid = new THREE.GridHelper(10, 20, 0x444444, 0x222222);
+    grid.position.y = 0;
+    scene.add(grid);
+
+    // === START WEBXR SESSION ===
+    const session = await navigator.xr.requestSession('immersive-ar', {
+      requiredFeatures: ['local-floor'],
+      optionalFeatures: ['dom-overlay'],
+      domOverlay: { root: document.getElementById('overlay') }
+    });
+
+    renderer.xr.setReferenceSpaceType('local-floor');
+    await renderer.xr.setSession(session);
+
+    log('✅ AR SESSION ACTIVE\nRed/Green/Blue cubes + gold coin placed\nWalk around — do they stay in place?');
+
+    // Hide start screen
+    document.getElementById('start').style.display = 'none';
+
+    // Move info to overlay so it's visible in AR
+    document.getElementById('overlay').appendChild(info);
+    info.style.pointerEvents = 'none';
+
+    // === GET REFERENCE SPACE ===
+    const refSpace = renderer.xr.getReferenceSpace();
+
+    // === RENDER LOOP ===
+    let frameCount = 0;
+
+    renderer.setAnimationLoop((timestamp, frame) => {
+      frameCount++;
+
+      if (frame) {
+        const pose = frame.getViewerPose(refSpace);
+        if (pose) {
+          const p = pose.transform.position;
+          const o = pose.transform.orientation;
+
+          // Show camera world position live
+          if (frameCount % 10 === 0) { // Update every 10 frames to be readable
+            log(
+              `✅ AR ACTIVE | Frame: ${frameCount}\n` +
+              `📍 Camera pos: x=${p.x.toFixed(2)} y=${p.y.toFixed(2)} z=${p.z.toFixed(2)}\n` +
+              `🔄 Orientation: x=${o.x.toFixed(2)} y=${o.y.toFixed(2)} z=${o.z.toFixed(2)} w=${o.w.toFixed(2)}\n` +
+              `📦 Red cube at: (0.00, 0.10, -1.00) — FIXED\n` +
+              `📦 Green cube: (0.50, 0.10, -1.50) — FIXED\n` +
+              `📦 Blue cube: (-0.70, 0.10, -0.80) — FIXED\n` +
+              `🪙 Gold coin: (0.00, 0.01, -0.70) — FIXED\n` +
+              `\nIf camera pos changes when you walk = AR TRACKING WORKS\n` +
+              `If cubes move with phone = BUG (tell me!)`
+            );
+          }
+        } else {
+          if (frameCount % 30 === 0) {
+            log('⚠️ No viewer pose available yet — keep looking around');
+          }
+        }
+      }
+
+      // Spin the cubes slowly so you can see they're 3D
+      cube.rotation.y += 0.01;
+      cube2.rotation.y += 0.015;
+      cube3.rotation.y += 0.012;
+      coin.rotation.z += 0.02;
+
+      renderer.render(scene, camera);
+    });
+
+    session.addEventListener('end', () => {
+      renderer.setAnimationLoop(null);
+      log('AR session ended');
+    });
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+  } catch(e) {
+    log('❌ AR FAILED: ' + e.message + '\n\nStack: ' + e.stack);
+    document.getElementById('err').textContent = e.message;
+    document.getElementById('start').style.display = 'flex';
+  }
+};
+</script>
+</body>
+</html>
