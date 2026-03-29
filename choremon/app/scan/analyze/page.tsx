@@ -86,7 +86,6 @@ function AnalyzeContent() {
 
       setDetections(mapped);
     } catch {
-      // Ignore detection errors
     }
 
     animFrameRef.current = requestAnimationFrame(() => detectLoop(model));
@@ -115,19 +114,16 @@ function AnalyzeContent() {
 
       const data: AnalyzeResponse = await response.json();
 
-      // Stop camera & detection
       if (streamRef.current) {
         streamRef.current.getTracks().forEach(t => t.stop());
       }
       cancelAnimationFrame(animFrameRef.current);
 
-      // Store result in sessionStorage and navigate
       sessionStorage.setItem('choremon-scan-result', JSON.stringify(data));
       sessionStorage.setItem('choremon-scan-choretype', choreType);
       router.push('/scan/result');
     } catch (error) {
       console.error('Analysis failed:', error);
-      // Fallback with generic spots
       const fallback: AnalyzeResponse = {
         spots: [
           { label: 'Dirty corner', xp: 30, position: 'bottom-left', difficulty: 'easy' },
@@ -157,7 +153,6 @@ function AnalyzeContent() {
         detectLoop(model as { detect: (video: HTMLVideoElement) => Promise<Array<{ bbox: [number, number, number, number]; class: string; score: number }>> });
       }
 
-      // Auto-capture after 3 seconds
       timer = setTimeout(() => {
         captureAndAnalyze();
       }, 3000);
@@ -172,7 +167,7 @@ function AnalyzeContent() {
         streamRef.current.getTracks().forEach(t => t.stop());
       }
     };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []); 
 
   if (cameraError) {
     return (
@@ -189,7 +184,6 @@ function AnalyzeContent() {
 
   return (
     <div className="fixed inset-0 bg-black overflow-hidden">
-      {/* Camera Feed */}
       <video
         ref={videoRef}
         className="absolute inset-0 w-full h-full object-cover"
@@ -199,10 +193,8 @@ function AnalyzeContent() {
       />
       <canvas ref={canvasRef} className="hidden" />
 
-      {/* Scan Line */}
       {analyzing && <div className="scan-line" />}
 
-      {/* Detection Boxes */}
       {detections.map((det, i) => {
         const video = videoRef.current;
         if (!video) return null;
@@ -228,7 +220,6 @@ function AnalyzeContent() {
         );
       })}
 
-      {/* Top Status Pill */}
       <div className="absolute top-12 left-1/2 -translate-x-1/2 z-30">
         <div className="frosted rounded-full px-5 py-2.5 flex items-center gap-3 shadow-lg">
           <div className="animate-spin-slow w-5 h-5 rounded-full border-2 border-green-primary border-t-transparent" />
@@ -237,12 +228,10 @@ function AnalyzeContent() {
         </div>
       </div>
 
-      {/* Rascal Corner */}
       <div className="absolute bottom-20 right-4 z-30">
         <Rascal size="md" />
       </div>
 
-      {/* Bottom Hint */}
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30">
         <div className="frosted rounded-full px-4 py-2 shadow-lg">
           <p className="text-xs font-semibold text-txt-light">Point at the area to clean</p>
