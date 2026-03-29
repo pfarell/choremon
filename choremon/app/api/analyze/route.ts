@@ -54,7 +54,6 @@ function parseJsonResponse(text: string): unknown | null {
   }
 }
 
-// ===== Claude Vision API =====
 async function tryClaudeVision(base64Data: string, choreType: string): Promise<unknown | null> {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) return null;
@@ -108,7 +107,6 @@ async function tryClaudeVision(base64Data: string, choreType: string): Promise<u
   }
 }
 
-// ===== Gemini Vision API =====
 async function tryGeminiVision(base64Data: string, choreType: string): Promise<unknown | null> {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) return null;
@@ -164,10 +162,8 @@ export async function POST(request: NextRequest) {
     const body: AnalyzeRequest = await request.json();
     const { imageBase64, choreType } = body;
 
-    // Strip the data URL prefix if present
     const base64Data = imageBase64.replace(/^data:image\/\w+;base64,/, '');
 
-    // Try Claude first
     console.log('Trying Claude Vision API...');
     const claudeResult = await tryClaudeVision(base64Data, choreType);
     if (claudeResult) {
@@ -175,7 +171,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(claudeResult);
     }
 
-    // Fallback to Gemini
     console.log('Trying Gemini Vision API...');
     const geminiResult = await tryGeminiVision(base64Data, choreType);
     if (geminiResult) {
@@ -183,7 +178,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(geminiResult);
     }
 
-    // Final fallback: mock data
     console.warn('Both APIs failed, returning mock data');
     return NextResponse.json(getMockResponse(choreType));
   } catch (error) {
