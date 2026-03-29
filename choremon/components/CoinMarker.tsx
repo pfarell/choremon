@@ -18,7 +18,6 @@ export default function CoinMarker({ x, y, xp, collected }: CoinMarkerProps) {
     if (collected && !wasCollected) {
       setWasCollected(true);
       setShowXP(true);
-      // Haptic feedback
       if (navigator.vibrate) navigator.vibrate(50);
       setTimeout(() => setShowXP(false), 1200);
     }
