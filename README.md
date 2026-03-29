@@ -8,7 +8,7 @@ Built in 44 hours at Hack Indy 2026.
 
 🌐 **Live Demo**: [choremon-six.vercel.app](https://choremon-six.vercel.app)
 
-📝 **Devpost**: [devpost.com/software/choremon](https://choremon-six.vercel.app)
+📝 **Devpost**: [devpost.com/software/choremon](https://devpost.com/software/choremon)
 
 🎥 **Video Pitch**: [Choremon Pitch Video](https://youtu.be/QNTnY8eavig)
 
