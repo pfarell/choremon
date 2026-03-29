@@ -11,12 +11,11 @@ export default function TrashChore({ onXPEarned, onComplete }) {
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
 
-  const [phase, setPhase] = useState("camera"); // camera | scanning | list
+  const [phase, setPhase] = useState("camera");
   const [trashItems, setTrashItems] = useState([]);
   const [totalXP, setTotalXP] = useState(0);
   const totalTrashCount = useRef(0);
 
-  // Auto-start camera when mounted
   useEffect(() => {
     let active = true;
     const startCamera = async () => {
@@ -43,7 +42,6 @@ export default function TrashChore({ onXPEarned, onComplete }) {
     };
   }, []);
 
-  // Capture frame → send to API
   const scanTrash = useCallback(async () => {
     setPhase("scanning");
 
@@ -77,16 +75,14 @@ export default function TrashChore({ onXPEarned, onComplete }) {
 
       const withStatus = items.map((item) => ({
         ...item,
-        status: "pending", // pending | done | not-trash
+        status: "pending", 
       }));
 
-      // Count only actual trash items for the completion stats
       totalTrashCount.current = items.filter((i) => i.isTrash).length;
 
       setTrashItems(withStatus);
       setPhase("list");
 
-      // Rascal TTS reacts
       if (totalTrashCount.current === 0) {
         console.log("No trash found!");
       } else {
@@ -95,11 +91,10 @@ export default function TrashChore({ onXPEarned, onComplete }) {
     } catch (err) {
       console.error(err);
       alert("Detection Error: " + err.message);
-      setPhase("camera"); // Fallback
+      setPhase("camera");
     }
   }, []);
 
-  // Tap Done — gives XP only if isTrash is true
   const markDone = (id) => {
     setTrashItems((prev) =>
       prev.map((item) => {
@@ -114,7 +109,6 @@ export default function TrashChore({ onXPEarned, onComplete }) {
     );
   };
 
-  // Tap Not Trash — dismisses with no XP
   const markNotTrash = (id) => {
     setTrashItems((prev) =>
       prev.map((item) =>
@@ -132,7 +126,6 @@ export default function TrashChore({ onXPEarned, onComplete }) {
     });
   };
 
-  // Resume camera if empty
   const resetCamera = async () => {
     setTrashItems([]);
     setTotalXP(0);
@@ -146,22 +139,18 @@ export default function TrashChore({ onXPEarned, onComplete }) {
   return (
     <div className="fixed inset-0 bg-black overflow-hidden flex flex-col z-50">
       
-      {/* Background Camera (Always Active) */}
       <video
         ref={videoRef}
         autoPlay
         playsInline
         className="absolute inset-0 w-full h-full object-cover z-0"
       />
-      {/* Hidden canvas for image capture */}
       <canvas ref={canvasRef} className="hidden" />
 
-      {/* Dark tint overlay for better readability when in list mode */}
       <div 
         className={`absolute inset-0 bg-black/40 z-[5] transition-opacity duration-500 pointer-events-none ${phase !== "camera" ? 'opacity-100' : 'opacity-0'}`} 
       />
 
-      {/* HUD Header */}
       <div className="relative z-10 flex-none p-4 pb-2 shadow-sm bg-white/80 backdrop-blur-md rounded-b-2xl">
          <div className="flex justify-between items-center">
             <h2 className="text-xl font-display font-medium text-txt">Trash Detection</h2>
@@ -170,7 +159,6 @@ export default function TrashChore({ onXPEarned, onComplete }) {
       </div>
 
       <div className="relative z-10 flex-1 overflow-y-auto no-scrollbar p-4 pb-24">
-        {/* CAMERA PHASE HUD - The button floats above the live feed */}
         {phase === "camera" && (
           <div className="h-full flex flex-col justify-end pb-8">
             <div className="bg-white/80 backdrop-blur-md rounded-2xl p-6 text-center shadow-2xl mx-auto w-full max-w-sm animate-slide-up">
@@ -187,7 +175,6 @@ export default function TrashChore({ onXPEarned, onComplete }) {
           </div>
         )}
 
-        {/* SCANNING PHASE HUD */}
         {phase === "scanning" && (
           <div className="h-full flex flex-col items-center justify-center text-center">
             <div className="bg-white/90 backdrop-blur-lg rounded-3xl p-8 shadow-2xl animate-fade-in max-w-sm w-full mx-auto">
@@ -198,11 +185,9 @@ export default function TrashChore({ onXPEarned, onComplete }) {
           </div>
         )}
 
-        {/* LIST PHASE HUD */}
         {phase === "list" && (
           <div className="space-y-4 pt-2">
             
-            {/* Pending items */}
             {pending.length > 0 && (
               <div className="space-y-3">
                 <AnimatePresence>
@@ -246,7 +231,6 @@ export default function TrashChore({ onXPEarned, onComplete }) {
               </div>
             )}
 
-            {/* Completed items (faded log) */}
             {done.length > 0 && pending.length > 0 && (
               <div className="mt-8">
                 <h4 className="font-bold text-white uppercase text-xs mb-3 ml-2 drop-shadow-md">Completed</h4>
@@ -264,7 +248,6 @@ export default function TrashChore({ onXPEarned, onComplete }) {
               </div>
             )}
 
-            {/* All cleared */}
             {allCleared && trashItems.length > 0 && (
               <div className="text-center py-10 space-y-4 animate-bounce-in bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl p-6 mt-10">
                 <p className="text-6xl drop-shadow-md">🎉</p>
@@ -289,7 +272,6 @@ export default function TrashChore({ onXPEarned, onComplete }) {
               </div>
             )}
 
-            {/* Nothing detected */}
             {trashItems.length === 0 && (
               <div className="text-center py-10 space-y-4 animate-bounce-in bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl p-6 mt-10">
                 <p className="text-6xl drop-shadow-md">✨</p>
