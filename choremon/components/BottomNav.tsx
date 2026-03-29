@@ -13,10 +13,8 @@ export default function BottomNav() {
   const [mounted, setMounted] = useState(false);
   const rippleCounter = useRef(0);
 
-  // Hide on live quest and celebration screens
   if (pathname.startsWith('/quest')) return null;
 
-  // Slide-up entrance animation
   useEffect(() => {
     const timer = setTimeout(() => setMounted(true), 100);
     return () => clearTimeout(timer);
@@ -48,9 +46,7 @@ export default function BottomNav() {
       id="bottom-navigation"
     >
       <div className="bottom-nav-duo__inner">
-        {/* Left pill container with Home + Leaderboard */}
         <div className="bottom-nav-duo__pill">
-          {/* Home tab */}
           <Link
             href="/"
             className={`bottom-nav-duo__tab ${isHome ? 'bottom-nav-duo__tab--active' : ''} ${
@@ -71,9 +67,6 @@ export default function BottomNav() {
             </div>
           </Link>
 
-          {/* No divider — cleaner look */}
-
-          {/* Leaderboard tab */}
           <Link
             href="/leaderboard"
             className={`bottom-nav-duo__tab ${isLeaderboard ? 'bottom-nav-duo__tab--active' : ''} ${
@@ -95,7 +88,6 @@ export default function BottomNav() {
           </Link>
         </div>
 
-        {/* Big shiny Plus button */}
         <Link
           href="/scan"
           className={`bottom-nav-duo__plus ${isScan ? 'bottom-nav-duo__plus--active' : ''} ${
@@ -105,9 +97,7 @@ export default function BottomNav() {
           id="nav-scan"
         >
           <div className="bottom-nav-duo__plus-inner">
-            {/* Shiny gradient overlay */}
             <div className="bottom-nav-duo__plus-shine" />
-            {/* Plus icon */}
             <svg
               width="28"
               height="28"
@@ -122,7 +112,6 @@ export default function BottomNav() {
                 strokeLinecap="round"
               />
             </svg>
-            {/* Ripple effect */}
             {ripple && (
               <span
                 key={ripple.id}
