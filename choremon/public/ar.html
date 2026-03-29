@@ -145,7 +145,7 @@ document.getElementById('qn').textContent = (EM[CT]||'🧹') + ' ' + (NM[CT]||'Q
 
 // Tile Mode → open Unity AR app via Android Intent
 document.getElementById('tile-btn').onclick = () => {
-  window.location.href = 'intent://launch#Intent;scheme=choremon;package=com.unity.template.ar_mobile;S.browser_fallback_url=https%3A%2F%2Fchoremon-zeta.vercel.app%2Far.html;end';
+  window.location.href = 'intent://#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;package=com.unity.template.ar_mobile;end';
 };
 
 // ===== GAME STATE =====
