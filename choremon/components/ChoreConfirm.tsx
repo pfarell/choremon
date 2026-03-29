@@ -50,7 +50,6 @@ export default function ChoreConfirm({ choreType, onNow, onLater }: ChoreConfirm
   const mascotSrc = MASCOT_MAP[choreType] || '/racoon_mascot.png';
   const messages = CHORE_MESSAGES[choreType];
 
-  // Staggered entrance
   useEffect(() => {
     requestAnimationFrame(() => setVisible(true));
     const t1 = setTimeout(() => setMascotIn(true), 150);
@@ -80,7 +79,6 @@ export default function ChoreConfirm({ choreType, onNow, onLater }: ChoreConfirm
   return (
     <div className={`chore-confirm-overlay ${visible ? 'chore-confirm-overlay--visible' : ''} ${leaving ? 'chore-confirm-overlay--leaving' : ''}`}>
       <div className="chore-confirm-card">
-        {/* Raccoon mascot image */}
         <div className={`chore-confirm-mascot ${mascotIn ? 'chore-confirm-mascot--in' : ''}`}>
           <Image
             src={mascotSrc}
@@ -93,15 +91,12 @@ export default function ChoreConfirm({ choreType, onNow, onLater }: ChoreConfirm
           />
         </div>
 
-        {/* Title + subtitle */}
         <div className={`chore-confirm-text ${textIn ? 'chore-confirm-text--in' : ''}`}>
           <h2 className="chore-confirm-text__title">{messages.title}</h2>
           <p className="chore-confirm-text__subtitle">{messages.subtitle}</p>
         </div>
 
-        {/* Buttons */}
         <div className={`chore-confirm-buttons ${buttonsIn ? 'chore-confirm-buttons--in' : ''}`}>
-          {/* NOW — shiny green Duolingo button */}
           <button
             className={`chore-confirm-btn chore-confirm-btn--now ${nowPressed ? 'chore-confirm-btn--pressed' : ''}`}
             onClick={handleNow}
@@ -115,7 +110,6 @@ export default function ChoreConfirm({ choreType, onNow, onLater }: ChoreConfirm
             <span className="chore-confirm-btn__label">Now</span>
           </button>
 
-          {/* DO IT LATER — grey button */}
           <button
             className={`chore-confirm-btn chore-confirm-btn--later ${laterPressed ? 'chore-confirm-btn--pressed' : ''}`}
             onClick={handleLater}
