@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// Hardcoded API keys with fallback rotation
 const API_KEYS = [
   process.env.GEMINI_API_KEY,
-  'REDACTED_GEMINI_KEY',
-  'REDACTED_GEMINI_KEY',
-  'REDACTED_GEMINI_KEY',
+  'REDACTED_PLACEHOLDER_KEY',
+  'REDACTED_PLACEHOLDER_KEY',
+  'REDACTED_PLACEHOLDER_KEY',
 ].filter(Boolean) as string[];
 
 interface RemainingItem {
@@ -134,7 +133,6 @@ export async function POST(request: NextRequest) {
 
     const base64Data = imageBase64.replace(/^data:image\/\w+;base64,/, '');
 
-    // Build list of ignored item names for the prompt
     const ignoredNames: string[] = (ignoredItems || []).map((id: string) => {
       const item = remainingItems.find((i: RemainingItem) => i.id === id);
       return item ? item.name : id;
@@ -147,7 +145,6 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Try each API key until one works
     for (let i = 0; i < API_KEYS.length; i++) {
       try {
         const result = await tryGeminiWithKey(API_KEYS[i], base64Data, remainingItems, ignoredNames, choreType || 'trash', i);
@@ -160,7 +157,6 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // All keys failed — return all visible (safe fallback)
     console.warn('ALL API keys failed for check, returning all visible');
     return NextResponse.json({
       still_visible: remainingItems.map((item: RemainingItem) => item.id),
