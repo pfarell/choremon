@@ -46,7 +46,6 @@ function log(msg) {
   console.log(msg);
 }
 
-// Check support
 let supported = false;
 if (navigator.xr) {
   try {
@@ -69,7 +68,6 @@ document.getElementById('go').onclick = async () => {
   try {
     log('Requesting AR session...');
 
-    // === RENDERER ===
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -77,25 +75,19 @@ document.getElementById('go').onclick = async () => {
     document.body.prepend(renderer.domElement);
     renderer.domElement.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:0';
 
-    // === SCENE ===
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 20);
 
-    // Light
     scene.add(new THREE.AmbientLight(0xffffff, 1));
     scene.add(new THREE.DirectionalLight(0xffffff, 0.8));
 
-    // === RED CUBE — 20cm, sitting on the floor ===
     const cube = new THREE.Mesh(
       new THREE.BoxGeometry(0.2, 0.2, 0.2),
       new THREE.MeshStandardMaterial({ color: 0xff0000 })
     );
-    // Place it 1 meter in front of starting position, on the floor
-    // In local-floor space, Y=0 is the floor
-    cube.position.set(0, 0.1, -1); // 10cm up (half the cube height) so it sits ON the floor
+    cube.position.set(0, 0.1, -1);
     scene.add(cube);
 
-    // === GREEN CUBE — at a different position ===
     const cube2 = new THREE.Mesh(
       new THREE.BoxGeometry(0.2, 0.2, 0.2),
       new THREE.MeshStandardMaterial({ color: 0x00ff00 })
@@ -103,7 +95,6 @@ document.getElementById('go').onclick = async () => {
     cube2.position.set(0.5, 0.1, -1.5);
     scene.add(cube2);
 
-    // === BLUE CUBE — another position ===
     const cube3 = new THREE.Mesh(
       new THREE.BoxGeometry(0.2, 0.2, 0.2),
       new THREE.MeshStandardMaterial({ color: 0x0088ff })
@@ -111,7 +102,6 @@ document.getElementById('go').onclick = async () => {
     cube3.position.set(-0.7, 0.1, -0.8);
     scene.add(cube3);
 
-    // === YELLOW FLAT COIN on floor ===
     const coin = new THREE.Mesh(
       new THREE.CylinderGeometry(0.15, 0.15, 0.02, 32),
       new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.8, roughness: 0.2 })
@@ -120,12 +110,10 @@ document.getElementById('go').onclick = async () => {
     coin.position.set(0, 0.01, -0.7);
     scene.add(coin);
 
-    // === FLOOR GRID for reference ===
     const grid = new THREE.GridHelper(10, 20, 0x444444, 0x222222);
     grid.position.y = 0;
     scene.add(grid);
 
-    // === START WEBXR SESSION ===
     const session = await navigator.xr.requestSession('immersive-ar', {
       requiredFeatures: ['local-floor'],
       optionalFeatures: ['dom-overlay'],
@@ -137,17 +125,13 @@ document.getElementById('go').onclick = async () => {
 
     log('✅ AR SESSION ACTIVE\nRed/Green/Blue cubes + gold coin placed\nWalk around — do they stay in place?');
 
-    // Hide start screen
     document.getElementById('start').style.display = 'none';
 
-    // Move info to overlay so it's visible in AR
     document.getElementById('overlay').appendChild(info);
     info.style.pointerEvents = 'none';
 
-    // === GET REFERENCE SPACE ===
     const refSpace = renderer.xr.getReferenceSpace();
 
-    // === RENDER LOOP ===
     let frameCount = 0;
 
     renderer.setAnimationLoop((timestamp, frame) => {
@@ -159,8 +143,7 @@ document.getElementById('go').onclick = async () => {
           const p = pose.transform.position;
           const o = pose.transform.orientation;
 
-          // Show camera world position live
-          if (frameCount % 10 === 0) { // Update every 10 frames to be readable
+          if (frameCount % 10 === 0) { 
             log(
               `✅ AR ACTIVE | Frame: ${frameCount}\n` +
               `📍 Camera pos: x=${p.x.toFixed(2)} y=${p.y.toFixed(2)} z=${p.z.toFixed(2)}\n` +
@@ -180,7 +163,6 @@ document.getElementById('go').onclick = async () => {
         }
       }
 
-      // Spin the cubes slowly so you can see they're 3D
       cube.rotation.y += 0.01;
       cube2.rotation.y += 0.015;
       cube3.rotation.y += 0.012;
