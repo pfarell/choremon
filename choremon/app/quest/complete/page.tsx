@@ -27,12 +27,10 @@ export default function CompletePage() {
   const processedRef = useRef(false);
 
   useEffect(() => {
-    // Try localStorage first (from AR mode / ar.html)
     let raw = localStorage.getItem('choremon-last-quest');
     let source = 'ar';
 
     if (!raw) {
-      // Fallback to sessionStorage (from old motion-detection mode)
       raw = sessionStorage.getItem('choremon-quest-result');
       source = 'session';
     }
@@ -44,7 +42,6 @@ export default function CompletePage() {
 
     const parsed = JSON.parse(raw);
 
-    // Normalize field names (AR uses coinsCollected/totalCoins, session uses spotsCollected/totalSpots)
     const questResult: QuestResult = {
       choreType: parsed.choreType || 'vacuum',
       spotsCollected: parsed.coinsCollected ?? parsed.spotsCollected ?? 0,
@@ -54,7 +51,6 @@ export default function CompletePage() {
     };
     setResult(questResult);
 
-    // Process quest completion only once
     if (!processedRef.current) {
       processedRef.current = true;
 
@@ -63,7 +59,6 @@ export default function CompletePage() {
       setNewLevel(completion.newLevel);
       setStreak(completion.stats.streak);
 
-      // Save to history
       addToHistory({
         id: Date.now().toString(),
         date: new Date().toISOString(),
@@ -76,7 +71,6 @@ export default function CompletePage() {
         cleanliness: 0,
       });
 
-      // Play sounds
       setTimeout(() => {
         playQuestComplete();
         if (completion.leveledUp) {
@@ -84,7 +78,6 @@ export default function CompletePage() {
         }
       }, 500);
 
-      // Animate XP counter
       const duration = 1500;
       const steps = 60;
       const increment = questResult.xpEarned / steps;
@@ -99,7 +92,6 @@ export default function CompletePage() {
         }
       }, duration / steps);
 
-      // Cleanup both storage sources
       localStorage.removeItem('choremon-last-quest');
       sessionStorage.removeItem('choremon-quest-result');
       sessionStorage.removeItem('choremon-live-quest');
@@ -128,25 +120,21 @@ export default function CompletePage() {
       <Celebration />
 
       <div className="card w-full max-w-sm text-center py-8 px-6 animate-bounce-in relative z-10 shadow-lg">
-        {/* Rascal celebrating */}
         <div className="mb-4">
           <Rascal size="lg" className="mx-auto" />
         </div>
 
-        {/* Title */}
         <h1 className="font-display text-3xl text-txt mb-1">QUEST COMPLETE!</h1>
         <p className="text-sm text-txt-light font-semibold mb-5">
           {choreInfo?.emoji} {choreInfo?.name}
         </p>
-
-        {/* XP Earned */}
+        
         <div className="mb-4">
           <div className="text-4xl font-bold text-gold font-display">
             +{displayXP} XP ⭐
           </div>
         </div>
 
-        {/* Stats */}
         <div className="flex items-center justify-center gap-6 mb-4 text-center">
           <div>
             <p className="text-lg font-bold text-txt">{formatTime(result.timeSeconds)}</p>
@@ -164,7 +152,6 @@ export default function CompletePage() {
           </div>
         </div>
 
-        {/* Level Up */}
         {leveledUp && (
           <div className="bg-gold/10 border-2 border-gold rounded-2xl p-3 mb-5 animate-bounce-in" style={{ animationDelay: '0.3s' }}>
             <p className="font-bold text-gold text-sm">🏅 LEVEL UP!</p>
@@ -174,7 +161,6 @@ export default function CompletePage() {
           </div>
         )}
 
-        {/* Buttons */}
         <div className="flex flex-col gap-3 mt-2">
           <button
             onClick={() => router.push('/scan')}
