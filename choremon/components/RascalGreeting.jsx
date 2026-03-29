@@ -9,8 +9,6 @@ export default function RascalGreeting() {
   useEffect(() => {
     if (fired.current) return;
     
-    // Most browsers block audio until the user interacts with the page (Autoplay Policy).
-    // We wait for the *first* click or touch, then play the greeting.
     const unlockAudio = () => {
       if (fired.current) return;
       fired.current = true;
