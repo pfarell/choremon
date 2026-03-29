@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// Hardcoded API keys with fallback rotation
 const API_KEYS = [
   process.env.GEMINI_API_KEY,
   'REDACTED_GEMINI_KEY',
@@ -138,7 +137,6 @@ export async function POST(request: NextRequest) {
 
     console.log(`Total API keys available: ${API_KEYS.length}`);
 
-    // Try each API key until one works
     for (let i = 0; i < API_KEYS.length; i++) {
       try {
         const result = await tryGeminiWithKey(API_KEYS[i], base64Data, choreType, i);
@@ -151,7 +149,6 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // All keys failed — return mock
     console.warn('ALL API keys failed, returning mock data');
     return NextResponse.json(getMockScanResponse(choreType));
   } catch (error) {
