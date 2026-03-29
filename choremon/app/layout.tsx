@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
+import RascalGreeting from '@/components/RascalGreeting';
 
 export const metadata: Metadata = {
   title: 'Choremon — Gamified Cleaning',
@@ -35,6 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="font-body bg-bg min-h-screen antialiased">
         <main className="max-w-md mx-auto relative min-h-screen">
+          <RascalGreeting />
           {children}
         </main>
       </body>

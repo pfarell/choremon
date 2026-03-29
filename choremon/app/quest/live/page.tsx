@@ -6,6 +6,7 @@ import Rascal from '@/components/Rascal';
 import { CHORE_TYPES } from '@/lib/constants';
 import { ChoreType, RascalExpression } from '@/lib/types';
 import { playCoinCollect, playQuestComplete, playButtonTap } from '@/lib/sounds';
+import { useRascalChatter } from '@/hooks/useRascalChatter';
 
 // ===== Sound effects =====
 function playDismissSound() {
@@ -216,6 +217,9 @@ function LiveQuestContent() {
 
   const choreInfo = CHORE_TYPES.find((c: { id: string }) => c.id === choreType);
   const choreLabel = choreType === 'laundry' ? 'laundry' : 'trash';
+
+  // Rascal TTS chatter during active cleaning
+  useRascalChatter({ choreType, isActive: phase === 'cleaning' });
 
   // Sync state → refs
   useEffect(() => { itemsRef.current = items; }, [items]);

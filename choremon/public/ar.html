@@ -14,8 +14,9 @@
     #start h1{font-size:56px}
     #start .title{font-size:22px;font-weight:900;color:#3C3C3C}
     #start p{font-size:13px;font-weight:700;color:#AFAFAF;text-align:center;max-width:280px;line-height:1.5}
-    #start-btn{background:#58CC02;color:#fff;border:none;border-radius:16px;padding:18px 48px;font-size:18px;font-weight:800;font-family:'Nunito';cursor:pointer;box-shadow:0 4px 0 0 #4CAD02;text-transform:uppercase;margin-top:8px}
-    #start-btn:active{transform:translateY(4px);box-shadow:none}
+    #start-btn, #tile-btn {background:#58CC02;color:#fff;border:none;border-radius:16px;padding:18px 24px;font-size:16px;font-weight:800;font-family:'Nunito';cursor:pointer;box-shadow:0 4px 0 0 #4CAD02;text-transform:uppercase;flex: 1;text-align:center}
+    #start-btn:active, #tile-btn:active {transform:translateY(4px) !important;box-shadow:none !important}
+    #tile-btn {background:#1CB0F6;box-shadow:0 4px 0 0 #1899D6;}
     #err{color:#FF4B4B;font-weight:800;font-size:13px;display:none;text-align:center;max-width:280px}
     #mode-badge{font-size:11px;font-weight:800;padding:4px 12px;border-radius:99px;margin-top:4px}
     .mode-ar{background:#D7FFB8;color:#4CAD02}
@@ -81,7 +82,10 @@
     <div class="title">CHOREMON</div>
     <p>Walk around to collect AR coins from the floor!</p>
     <div id="mode-badge"></div>
-    <button id="start-btn">START AR</button>
+    <div style="display:flex;gap:12px;margin-top:8px;width:100%;max-width:340px">
+      <button id="start-btn">COIN MODE</button>
+      <button id="tile-btn" onclick="alert('Tile mode under construction! 🚧')">TILE MODE</button>
+    </div>
     <div id="err"></div>
   </div>
 
