@@ -22,7 +22,6 @@ export default function HomePage() {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [onboardingStep, setOnboardingStep] = useState(0);
 
-  // Typewriter state
   const [displayedText, setDisplayedText] = useState('');
   const [showBubble, setShowBubble] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
@@ -33,12 +32,9 @@ export default function HomePage() {
     []
   );
 
-  // Typewriter effect
   const startTypewriter = useCallback(() => {
-    // Phase 1: Pop in the bubble
     setShowBubble(true);
 
-    // Phase 2: Start typewriter after bubble appears
     const startDelay = setTimeout(() => {
       setIsTyping(true);
       let charIndex = 0;
@@ -50,13 +46,12 @@ export default function HomePage() {
         } else {
           clearInterval(typeInterval);
           setIsTyping(false);
-          // Stop cursor blinking after a moment
           setTimeout(() => setShowCursor(false), 1500);
         }
-      }, 40); // 40ms per character for smooth fast typing
+      }, 40); 
 
       return () => clearInterval(typeInterval);
-    }, 400); // wait for bubble pop-in
+    }, 400); 
 
     return () => clearTimeout(startDelay);
   }, [greeting]);
@@ -68,10 +63,8 @@ export default function HomePage() {
       setShowOnboarding(true);
     }
 
-    // Trigger typewriter on mount
     const cleanup = startTypewriter();
-    
-    // Trigger TTS for this specific bubble text
+
     if (!globalAudioUnlocked) {
       const unlockAudio = () => {
         globalAudioUnlocked = true;
@@ -87,7 +80,6 @@ export default function HomePage() {
         window.removeEventListener('touchstart', unlockAudio);
       };
     } else {
-      // Audio already unlocked (i.e. user navigated back here), play instantly
       rascalSpeak(greeting);
       return cleanup;
     }
@@ -122,7 +114,6 @@ export default function HomePage() {
 
   return (
     <div className="pb-24 px-4 pt-4">
-      {/* === Onboarding Overlay === */}
       {showOnboarding && (
         <div className="fixed inset-0 z-[100] bg-black/60 flex items-center justify-center p-6">
           <div className="bg-white rounded-2xl p-6 max-w-sm w-full animate-bounce-in text-center">
@@ -153,7 +144,6 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* === Top Bar: Streak - Choremon - Level === */}
       <div className="hero-topbar animate-slide-up">
         <div className="hero-topbar__streak">
           <Flame size={24} className="text-orange" fill="#FF9600" />
@@ -165,15 +155,13 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* === Rascal Mascot + Speech Bubble Area === */}
       <div className="hero-rascal-section animate-slide-up" style={{ animationDelay: '0.05s' }}>
         <div className="hero-rascal-row">
-          {/* Raccoon mascot */}
+
           <div className="hero-rascal__mascot">
             <Rascal size="xl" animate />
           </div>
 
-          {/* Speech bubble with typewriter */}
           <div className={`hero-speech-bubble ${showBubble ? 'hero-speech-bubble--visible' : ''}`}>
             <div className="hero-speech-bubble__tail" />
             <p className="hero-speech-bubble__text">
@@ -187,12 +175,10 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* === XP Progress Bar (overlapping raccoon) === */}
       <div className="hero-xp-section animate-slide-up" style={{ animationDelay: '0.1s' }}>
         <XPBar totalXP={stats.totalXP} level={stats.level} />
       </div>
 
-      {/* === Scan Room Button === */}
       <div className="mb-6 animate-slide-up" style={{ animationDelay: '0.15s' }}>
         <Link href="/scan" onClick={() => { resumeAudio(); playButtonTap(); }}>
           <button className="btn-3d btn-green pulse-ring w-full text-lg">
@@ -202,7 +188,6 @@ export default function HomePage() {
         </Link>
       </div>
 
-      {/* === Active Quests === */}
       {quests.length > 0 && (
         <div className="animate-slide-up" style={{ animationDelay: '0.2s' }}>
           <h3 className="font-display text-lg text-txt mb-3">Active Quests</h3>
