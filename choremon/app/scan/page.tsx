@@ -19,13 +19,11 @@ export default function ScanPage() {
     if (!selected) return;
     playButtonTap();
 
-    // Vacuum, Mop & Laundry — no AI camera needed, go straight to Now/Later confirm
     if (selected === 'vacuum' || selected === 'mop' || selected === 'laundry') {
       setShowConfirm(true);
       return;
     }
 
-    // Trash — use AI scan first, then Now/Later on result page
     router.push(`/scan/analyze?type=${selected}`);
   };
 
@@ -33,13 +31,11 @@ export default function ScanPage() {
     if (!selected) return;
     playButtonTap();
     
-    // Laundry goes to static Live Quest mode
     if (selected === 'laundry') {
       router.push(`/quest/live?choreType=${selected}`);
       return;
     }
     
-    // Vacuum & Mop go to AR Canvas mode
     window.location.href = `/ar.html?choreType=${selected}`;
   };
 
@@ -95,7 +91,6 @@ export default function ScanPage() {
         Continue
       </button>
 
-      {/* Now/Later confirm for vacuum & mop (no AI scan needed) */}
       {showConfirm && selected && (
         <ChoreConfirm
           choreType={selected}
