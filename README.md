@@ -114,7 +114,3 @@ To build the APK:
 - [ ] Snap Spectacles / Even G2 AR integration
 
 ---
-
-## 📄 License
-
-MIT
