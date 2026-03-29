@@ -9,8 +9,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing choreType or xp" }, { status: 400 });
     }
 
-    // TODO: Save to Supabase when ready
-    // For now just return success so Unity can confirm it works
     console.log(`Chore complete: ${choreType} | XP: ${xp} | User: ${userId}`);
 
     return NextResponse.json({
