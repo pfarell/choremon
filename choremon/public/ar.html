@@ -9,7 +9,6 @@
     *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
     body{font-family:'Nunito',sans-serif;overflow:hidden;background:#000;position:fixed;width:100%;height:100%}
 
-    /* Start screen */
     #start{position:fixed;inset:0;z-index:500;background:#FAFAF8;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px}
     #start h1{font-size:56px}
     #start .title{font-size:22px;font-weight:900;color:#3C3C3C}
@@ -22,7 +21,6 @@
     .mode-ar{background:#D7FFB8;color:#4CAD02}
     .mode-fb{background:#FFF0F0;color:#FF4B4B}
 
-    /* Scan phase */
     #scan{position:fixed;inset:0;z-index:200;display:none;pointer-events:none}
     #scan-text{position:fixed;top:45%;left:50%;transform:translate(-50%,-50%);z-index:201;background:rgba(0,0,0,.75);color:#fff;padding:20px 28px;border-radius:20px;text-align:center;font-weight:700;font-size:15px;line-height:1.5}
     #scan-bar-wrap{position:fixed;bottom:100px;left:20px;right:20px;z-index:201}
@@ -32,14 +30,12 @@
     #place-btn{position:fixed;bottom:30px;left:20px;right:20px;z-index:202;background:#58CC02;color:#fff;border:none;border-radius:16px;padding:16px;font-size:16px;font-weight:800;font-family:'Nunito';cursor:pointer;box-shadow:0 4px 0 0 #4CAD02;text-transform:uppercase;display:none;pointer-events:auto}
     #place-btn:active{transform:translateY(4px);box-shadow:none}
 
-    /* Rascal intro */
     #roast-overlay{position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;transition:opacity .5s;pointer-events:none}
     #roast-overlay.show{opacity:1}
     .roast-card{background:rgba(255,255,255,.92);backdrop-filter:blur(20px);border-radius:24px;padding:24px;text-align:center;max-width:300px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.15)}
     .roast-emoji{font-size:56px;margin-bottom:8px}
     .roast-text{font-size:15px;font-weight:800;line-height:1.4;color:#3C3C3C}
 
-    /* Game HUD */
     #hud{display:none}
     .ht{position:fixed;top:0;left:0;right:0;padding:calc(16px + env(safe-area-inset-top,0px)) 16px 10px;background:rgba(255,255,255,.9);backdrop-filter:blur(12px);z-index:100}
     .tr{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
@@ -63,7 +59,6 @@
     .xp-pop{position:fixed;z-index:300;font-weight:900;font-size:28px;color:#FFD700;text-shadow:0 2px 8px rgba(0,0,0,.5);pointer-events:none;animation:xpu 1s ease-out forwards}
     @keyframes xpu{0%{transform:translateY(0) scale(1);opacity:1}100%{transform:translateY(-80px) scale(1.3);opacity:0}}
 
-    /* iOS fallback */
     #ios-msg{position:fixed;inset:0;z-index:500;background:#FAFAF8;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px;text-align:center}
     #ios-msg h2{font-size:48px}
     #ios-msg .t{font-size:18px;font-weight:800;color:#3C3C3C}
@@ -73,10 +68,8 @@
 </head>
 <body>
 
-<!-- DOM OVERLAY ROOT (visible during AR) -->
 <div id="overlay">
 
-  <!-- START -->
   <div id="start">
     <h1>🦝</h1>
     <div class="title">CHOREMON</div>
@@ -89,17 +82,14 @@
     <div id="err"></div>
   </div>
 
-  <!-- SCAN PHASE -->
   <div id="scan">
     <div id="scan-text">📱 Look around the floor slowly<br>Let AR map the surface</div>
     <div id="scan-bar-wrap"><div id="scan-bg"><div id="scan-fill"></div></div><div id="scan-label">Scanning... 0%</div></div>
     <button id="place-btn">🪙 PLACE COINS</button>
   </div>
 
-  <!-- RASCAL ROAST -->
   <div id="roast-overlay"><div class="roast-card"><div class="roast-emoji">🦝</div><div class="roast-text" id="roast-msg"></div></div></div>
 
-  <!-- GAME HUD -->
   <div id="hud">
     <div class="ht"><div class="tr"><span class="qn" id="qn">🧹 Vacuum</span><div style="display:flex;gap:12px;align-items:center"><span class="sc" id="sc">🪙 0</span><span class="tm" id="tm">00:00</span></div></div><div class="xb"><div class="xf" id="xf" style="width:0%"></div></div><div class="xlb"><span id="xl">0 XP</span><span id="xr">0 XP</span></div></div>
     <div class="hb"><div class="rr"><div class="ra">🦝</div><div><div class="rt" id="rm">Walk to collect! 🦝</div><div class="cd" id="dots"></div></div></div><button class="bf d" id="fb" disabled>0/12</button></div>
@@ -107,7 +97,6 @@
 
 </div>
 
-<!-- iOS fallback message -->
 <div id="ios-msg">
   <h2>🦝</h2>
   <div class="t">AR requires Android Chrome</div>
@@ -128,7 +117,6 @@
 <script type="module">
 import * as THREE from 'three';
 
-// ===== CONFIG =====
 const P = new URLSearchParams(location.search);
 const CT = P.get('choreType') || 'vacuum';
 const NC = 12;
@@ -143,12 +131,10 @@ const RO = {
 
 document.getElementById('qn').textContent = (EM[CT]||'🧹') + ' ' + (NM[CT]||'Quest');
 
-// Tile Mode → open Unity AR app via Android Intent
 document.getElementById('tile-btn').onclick = () => {
   window.location.href = 'intent://#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;package=com.unity.template.ar_mobile;component=com.unity.template.ar_mobile/com.unity3d.player.UnityPlayerGameActivity;end';
 };
 
-// ===== GAME STATE =====
 let coins = [], totalXP = 0, earned = 0, got = 0, t0 = 0;
 let actx;
 
@@ -239,7 +225,6 @@ function showRoast() {
   setTimeout(() => el.classList.remove('show'), 3500);
 }
 
-// ===== CHECK SUPPORT =====
 let supported = false;
 if (navigator.xr) {
   try { supported = await navigator.xr.isSessionSupported('immersive-ar'); } catch(e) {}
@@ -259,7 +244,6 @@ if (supported) {
   document.getElementById('err').textContent = 'WebXR AR requires Android Chrome with ARCore. iPhone is not supported for walk-to-collect mode.';
 }
 
-// ===== START BUTTON =====
 document.getElementById('start-btn').onclick = async () => {
   if (!supported) {
     document.getElementById('ios-msg').style.display = 'flex';
@@ -268,10 +252,8 @@ document.getElementById('start-btn').onclick = async () => {
   }
 
   try {
-    // Init audio context on user gesture
     if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
 
-    // === RENDERER (exact same pattern as working test) ===
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(innerWidth, innerHeight);
@@ -279,7 +261,6 @@ document.getElementById('start-btn').onclick = async () => {
     document.body.prepend(renderer.domElement);
     renderer.domElement.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:0';
 
-    // === SCENE ===
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(70, innerWidth / innerHeight, 0.01, 100);
 
@@ -288,7 +269,6 @@ document.getElementById('start-btn').onclick = async () => {
     dl.position.set(1, 4, 1);
     scene.add(dl);
 
-    // === RETICLE (floor detector visual) ===
     const reticleGeo = new THREE.RingGeometry(0.08, 0.1, 32);
     reticleGeo.rotateX(-Math.PI / 2);
     const reticle = new THREE.Mesh(reticleGeo, new THREE.MeshBasicMaterial({ color: 0x58CC02 }));
@@ -296,10 +276,8 @@ document.getElementById('start-btn').onclick = async () => {
     reticle.matrixAutoUpdate = false;
     scene.add(reticle);
 
-    // === COIN GEOMETRY ===
     const coinGeo = new THREE.CylinderGeometry(0.1, 0.1, 0.01, 24);
 
-    // === XR SESSION ===
     const session = await navigator.xr.requestSession('immersive-ar', {
       requiredFeatures: ['local-floor', 'hit-test'],
       optionalFeatures: ['dom-overlay'],
@@ -312,29 +290,23 @@ document.getElementById('start-btn').onclick = async () => {
     const refSpace = renderer.xr.getReferenceSpace();
     const viewerSpace = await session.requestReferenceSpace('viewer');
 
-    // === HIT-TEST SOURCE ===
     let hitTestSource = null;
     try {
       hitTestSource = await session.requestHitTestSource({ space: viewerSpace });
     } catch(e) { console.warn('Hit-test not available:', e); }
 
-    // Hide start, show scan
     document.getElementById('start').style.display = 'none';
     document.getElementById('scan').style.display = 'block';
 
-    // === SCAN STATE ===
     let hitCount = 0, lastHitPos = null, coinsPlaced = false;
 
-    // Place button
     document.getElementById('place-btn').onclick = () => {
       if (lastHitPos && !coinsPlaced) placeCoins(lastHitPos);
     };
 
-    // Tap to place or collect
     session.addEventListener('select', () => {
       if (actx && actx.state === 'suspended') actx.resume();
       if (!coinsPlaced && lastHitPos) { placeCoins(lastHitPos); return; }
-      // Raycast center screen to collect
       const rc = new THREE.Raycaster();
       rc.setFromCamera(new THREE.Vector2(0, 0), camera);
       const hits = rc.intersectObjects(coins.filter(c => !c.got).map(c => c.mesh));
@@ -349,7 +321,6 @@ document.getElementById('start-btn').onclick = async () => {
       coinsPlaced = true;
       t0 = Date.now();
 
-      // Start timer
       setInterval(() => {
         const e = Math.floor((Date.now() - t0) / 1000);
         document.getElementById('tm').textContent =
@@ -379,7 +350,6 @@ document.getElementById('start-btn').onclick = async () => {
         coins.push({ mesh, wx, wy, wz, xp, got: false, bob: Math.random() * 6.28, cf: 0 });
       }
 
-      // Hide scan, show game
       document.getElementById('scan').style.display = 'none';
       document.getElementById('hud').style.display = 'block';
       reticle.visible = false;
@@ -387,14 +357,12 @@ document.getElementById('start-btn').onclick = async () => {
       showRoast();
     }
 
-    // === RENDER LOOP ===
     const clock = new THREE.Clock();
 
     renderer.setAnimationLoop((timestamp, frame) => {
       if (!frame) return;
       const t = clock.getElapsedTime();
 
-      // --- SCAN PHASE: hit-test to find floor ---
       if (!coinsPlaced && hitTestSource) {
         const results = frame.getHitTestResults(hitTestSource);
         if (results.length > 0) {
@@ -417,7 +385,6 @@ document.getElementById('start-btn').onclick = async () => {
         }
       }
 
-      // --- GAME PHASE: proximity + animation ---
       if (coinsPlaced) {
         const pose = frame.getViewerPose(refSpace);
         if (pose) {
@@ -432,7 +399,6 @@ document.getElementById('start-btn').onclick = async () => {
           });
         }
 
-        // Animate coins
         for (let i = 0; i < coins.length; i++) {
           const c = coins[i], m = c.mesh;
           if (c.got) {
