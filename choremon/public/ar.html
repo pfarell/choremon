@@ -84,7 +84,7 @@
     <div id="mode-badge"></div>
     <div style="display:flex;gap:12px;margin-top:8px;width:100%;max-width:340px">
       <button id="start-btn">COIN MODE</button>
-      <button id="tile-btn" onclick="alert('Tile mode under construction! 🚧')">TILE MODE</button>
+      <button id="tile-btn">TILE MODE</button>
     </div>
     <div id="err"></div>
   </div>
@@ -142,6 +142,11 @@ const RO = {
 };
 
 document.getElementById('qn').textContent = (EM[CT]||'🧹') + ' ' + (NM[CT]||'Quest');
+
+// Tile Mode → open Unity AR app via Android Intent
+document.getElementById('tile-btn').onclick = () => {
+  window.location.href = 'intent://#Intent;package=com.unity.template.ar_mobile;end';
+};
 
 // ===== GAME STATE =====
 let coins = [], totalXP = 0, earned = 0, got = 0, t0 = 0;
