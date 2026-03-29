@@ -145,7 +145,7 @@ document.getElementById('qn').textContent = (EM[CT]||'🧹') + ' ' + (NM[CT]||'Q
 
 // Tile Mode → open Unity AR app via Android Intent
 document.getElementById('tile-btn').onclick = () => {
-  window.location.href = 'intent://#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;package=com.unity.template.ar_mobile;end';
+  window.location.href = 'intent://#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;package=com.unity.template.ar_mobile;component=com.unity.template.ar_mobile/com.unity3d.player.UnityPlayerGameActivity;end';
 };
 
 // ===== GAME STATE =====
