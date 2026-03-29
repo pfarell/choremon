@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ===== Global Reset ===== */
 * {
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
@@ -16,7 +15,6 @@ html, body {
   font-family: 'Nunito', sans-serif;
 }
 
-/* ===== Duolingo 3D Buttons ===== */
 .btn-3d {
   position: relative;
   display: inline-flex;
@@ -86,7 +84,6 @@ html, body {
   background: #f5f5f5;
 }
 
-/* ===== Cards ===== */
 .card {
   background: #FFFFFF;
   border: 2px solid #E5E5E5;
@@ -94,7 +91,6 @@ html, body {
   padding: 16px;
 }
 
-/* ===== XP Progress Bar (legacy slim variant) ===== */
 .xp-bar-track {
   background: #E5E5E5;
   border-radius: 999px;
@@ -133,7 +129,6 @@ html, body {
   100% { transform: translateX(100%); }
 }
 
-/* ===== Duolingo XP Bar ===== */
 .xp-bar-card {
   background: #FFFFFF;
   border: 2.5px solid #E5E5E5;
@@ -187,7 +182,6 @@ html, body {
   animation: shimmer 2s infinite linear;
 }
 
-/* ===== Hero Top Bar ===== */
 .hero-topbar {
   display: flex;
   align-items: center;
@@ -224,7 +218,6 @@ html, body {
   font-family: 'Nunito', sans-serif;
 }
 
-/* ===== Rascal Mascot ===== */
 .rascal-mascot {
   position: relative;
   flex-shrink: 0;
@@ -265,7 +258,6 @@ html, body {
   100% { transform: rotate(0deg) scale(1); }
 }
 
-/* ===== Hero Rascal Section ===== */
 .hero-rascal-section {
   position: relative;
   margin-bottom: 0;
@@ -280,11 +272,10 @@ html, body {
 .hero-rascal__mascot {
   flex-shrink: 0;
   z-index: 1;
-  margin-bottom: -32px; /* overlap into XP bar */
+  margin-bottom: -32px; 
   position: relative;
 }
 
-/* ===== Speech Bubble ===== */
 .hero-speech-bubble {
   position: relative;
   background: #FFFFFF;
@@ -296,7 +287,6 @@ html, body {
   min-height: 60px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 
-  /* Pop-in animation */
   transform: scale(0);
   opacity: 0;
   transform-origin: left center;
@@ -308,8 +298,6 @@ html, body {
   transform: scale(1);
   opacity: 1;
 }
-
-/* Tail pointing to raccoon */
 .hero-speech-bubble__tail {
   position: absolute;
   left: -12px;
@@ -341,7 +329,6 @@ html, body {
   font-family: 'Nunito', sans-serif;
 }
 
-/* Typewriter cursor */
 .hero-speech-bubble__cursor {
   color: #58CC02;
   font-weight: 400;
@@ -357,14 +344,12 @@ html, body {
   50% { opacity: 0; }
 }
 
-/* ===== Hero XP Section ===== */
 .hero-xp-section {
   position: relative;
   z-index: 2;
   margin-bottom: 16px;
 }
 
-/* ===== Frosted Glass ===== */
 .frosted {
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(12px);
@@ -377,7 +362,6 @@ html, body {
   -webkit-backdrop-filter: blur(12px);
 }
 
-/* ===== Coin Styles ===== */
 .coin {
   display: flex;
   align-items: center;
@@ -398,7 +382,6 @@ html, body {
   text-shadow: 0 1px 2px rgba(0,0,0,0.2);
 }
 
-/* Small coin for motion-based grid */
 .coin-sm {
   display: flex;
   align-items: center;
@@ -456,7 +439,6 @@ html, body {
   100% { transform: translate(-50%, -80%) scale(0); opacity: 0; }
 }
 
-/* ===== XP Float ===== */
 .xp-float {
   animation: xpFloat 1.5s ease-out forwards;
   position: absolute;
@@ -473,7 +455,6 @@ html, body {
   100% { transform: translateY(-80px) scale(1.3); opacity: 0; }
 }
 
-/* ===== Pulse Ring (Scan button) ===== */
 .pulse-ring {
   position: relative;
 }
@@ -492,7 +473,6 @@ html, body {
   100% { transform: scale(1.15); opacity: 0; }
 }
 
-/* ===== Scan Line ===== */
 .scan-line {
   position: absolute;
   left: 0;
@@ -510,7 +490,6 @@ html, body {
   100% { top: 5%; }
 }
 
-/* ===== Confetti ===== */
 .confetti-piece {
   position: fixed;
   width: 10px;
@@ -531,7 +510,6 @@ html, body {
   }
 }
 
-/* ===== Duolingo Bottom Nav ===== */
 .bottom-nav-duo {
   position: fixed;
   bottom: 0;
@@ -559,7 +537,6 @@ html, body {
   gap: 16px;
 }
 
-/* --- Pill container --- */
 .bottom-nav-duo__pill {
   flex: 1;
   display: flex;
@@ -577,7 +554,6 @@ html, body {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
 }
 
-/* --- Divider --- */
 .bottom-nav-duo__divider {
   width: 2px;
   height: 28px;
@@ -586,7 +562,6 @@ html, body {
   flex-shrink: 0;
 }
 
-/* --- Tab button --- */
 .bottom-nav-duo__tab {
   flex: 1;
   display: flex;
@@ -603,8 +578,6 @@ html, body {
 .bottom-nav-duo__tab--pressed {
   transform: scale(0.9);
 }
-
-/* --- Icon wrapper ring --- */
 .bottom-nav-duo__icon-wrapper {
   width: 48px;
   height: 48px;
@@ -625,12 +598,10 @@ html, body {
   transform: scale(1.08);
 }
 
-/* Active bounce effect */
 .bottom-nav-duo__icon-wrapper--active .bottom-nav-duo__icon-img {
   animation: duoIconBounce 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* --- Icon image --- */
 .bottom-nav-duo__icon-img {
   width: 32px;
   height: 32px;
@@ -652,7 +623,6 @@ html, body {
   transform: scale(1.1);
 }
 
-/* --- Plus button --- */
 .bottom-nav-duo__plus {
   width: 64px;
   height: 64px;
@@ -696,7 +666,6 @@ html, body {
     inset 0 1px 1px rgba(255, 255, 255, 0.3);
 }
 
-/* --- Shiny shimmer overlay --- */
 .bottom-nav-duo__plus-shine {
   position: absolute;
   top: -50%;
@@ -715,7 +684,6 @@ html, body {
   pointer-events: none;
 }
 
-/* --- Plus icon --- */
 .bottom-nav-duo__plus-icon {
   position: relative;
   z-index: 2;
@@ -727,7 +695,6 @@ html, body {
   transform: rotate(90deg);
 }
 
-/* --- Ripple effect --- */
 .bottom-nav-duo__ripple {
   position: absolute;
   width: 0;
@@ -740,7 +707,6 @@ html, body {
   z-index: 3;
 }
 
-/* --- Keyframes --- */
 @keyframes duoIconBounce {
   0% { transform: scale(1); }
   30% { transform: scale(1.25); }
@@ -762,7 +728,6 @@ html, body {
 
 
 
-/* ===== Speech Bubble ===== */
 .speech-bubble {
   position: relative;
   background: #FFFFFF;
@@ -797,13 +762,11 @@ html, body {
   border-right: 8px solid #FFFFFF;
 }
 
-/* ===== Stagger animation delays ===== */
 .stagger-1 { animation-delay: 0.05s; }
 .stagger-2 { animation-delay: 0.1s; }
 .stagger-3 { animation-delay: 0.15s; }
 .stagger-4 { animation-delay: 0.2s; }
 
-/* ===== Detection Box ===== */
 .detection-box {
   position: absolute;
   border: 2px solid;
@@ -824,7 +787,6 @@ html, body {
   color: white;
 }
 
-/* ===== Hide scrollbar ===== */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -833,7 +795,6 @@ html, body {
   scrollbar-width: none;
 }
 
-/* ===== Chore Confirm Overlay ===== */
 .chore-confirm-overlay {
   position: fixed;
   inset: 0;
@@ -864,7 +825,6 @@ html, body {
   padding: 24px 24px 36px;
 }
 
-/* --- Mascot --- */
 .chore-confirm-mascot {
   width: 260px;
   height: 260px;
@@ -893,7 +853,6 @@ html, body {
   50% { transform: translateY(-8px); }
 }
 
-/* --- Text --- */
 .chore-confirm-text {
   text-align: center;
   margin-bottom: 28px;
@@ -927,7 +886,6 @@ html, body {
   margin: 0 auto;
 }
 
-/* --- Buttons container --- */
 .chore-confirm-buttons {
   width: 100%;
   display: flex;
@@ -944,7 +902,6 @@ html, body {
   transform: translateY(0);
 }
 
-/* --- Base button --- */
 .chore-confirm-btn {
   position: relative;
   width: 100%;
@@ -968,7 +925,6 @@ html, body {
               filter 0.12s ease;
 }
 
-/* NOW button — green Duo style */
 .chore-confirm-btn--now {
   background: linear-gradient(180deg, #78E808 0%, #58CC02 100%);
   color: #FFFFFF;
@@ -987,7 +943,6 @@ html, body {
               0 2px 8px rgba(88, 204, 2, 0.15);
 }
 
-/* Shiny sweep effect on NOW button */
 .chore-confirm-btn__shine {
   position: absolute;
   top: 0;
@@ -1017,7 +972,6 @@ html, body {
   z-index: 2;
 }
 
-/* LATER button — grey Duo style */
 .chore-confirm-btn--later {
   background: linear-gradient(180deg, #F0F0F0 0%, #E5E5E5 100%);
   color: #8E8E8E;
@@ -1035,7 +989,6 @@ html, body {
               0 1px 4px rgba(0, 0, 0, 0.04);
 }
 
-/* ===== Saved Quest Card (on home page) ===== */
 .saved-quest-card {
   background: #FFFFFF;
   border: 2.5px solid #E5E5E5;
