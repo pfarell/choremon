@@ -77,7 +77,7 @@ If no trash is detected, return an empty array: []`
           const resData = await response.json();
 
           if (response.ok) {
-            return resData; // Success!
+            return resData; 
           } else {
             const metadataStr = resData.error?.metadata?.raw ? ` (${resData.error.metadata.raw})` : "";
             lastProviderError = new Error(`[${model}] ` + (resData.error?.message || "API failed") + metadataStr);
@@ -88,17 +88,15 @@ If no trash is detected, return an empty array: []`
           console.warn("[detect-trash fallback]", lastProviderError.message);
         }
       }
-      return { error: lastProviderError }; // Return the last error if all failed
+      return { error: lastProviderError }; 
     };
 
     let result = await tryProvider(openRouterModels, "https://openrouter.ai/api/v1/chat/completions", OPENROUTER_API_KEY);
     
-    // If OpenRouter exhausted all models and returned an error object, fallback to Featherless
     if (result && result.error) {
       console.warn("OpenRouter exhausted. Failing over to Featherless.ai...");
       const featherlessResult = await tryProvider(featherlessModels, "https://api.featherless.ai/v1/chat/completions", FEATHERLESS_API_KEY);
-      
-      // If Featherless also failed, throw the final error
+    
       if (featherlessResult && featherlessResult.error) {
         throw new Error("Both OpenRouter and Featherless providers failed. Last error: " + featherlessResult.error.message);
       } else if (featherlessResult) {
