@@ -2,9 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const API_KEYS = [
   process.env.GEMINI_API_KEY,
-  'REDACTED_GEMINI_KEY',
-  'REDACTED_GEMINI_KEY',
-  'REDACTED_GEMINI_KEY',
+  ...(process.env.GEMINI_API_KEYS || '').split(',').map((k) => k.trim()),
 ].filter(Boolean) as string[];
 
 function getScanPrompt(choreType: string): string {

@@ -1,13 +1,16 @@
 import { ElevenLabsClient } from "elevenlabs";
 
-const ELEVENLABS_API_KEY = "REDACTED_ELEVENLABS_KEY";
 const ELEVENLABS_VOICE_ID = "vBKc2FfBKJfcZNyEt1n6";
 
-const client = new ElevenLabsClient({ apiKey: ELEVENLABS_API_KEY });
-
 export async function POST(req) {
+  const apiKey = process.env.ELEVENLABS_API_KEY;
+  if (!apiKey) {
+    return new Response(JSON.stringify({ error: "ELEVENLABS_API_KEY is not set" }), { status: 500 });
+  }
+
   try {
     const { text } = await req.json();
+    const client = new ElevenLabsClient({ apiKey });
 
     const audioStream = await client.textToSpeech.convert(ELEVENLABS_VOICE_ID, {
       text,

@@ -1,2 +1,25 @@
+# dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# next.js
+.next/
+out/
+build/
+
+# debug
+npm-debug.log*
+
+# env — never commit real values
+.env
+.env.*
+!.env.example
+
+# vercel / misc
 .vercel
-.env*.local
+.DS_Store
+*.pem
+*.tsbuildinfo
+next-env.d.ts
+coverage/

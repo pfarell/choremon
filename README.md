@@ -1,120 +1,140 @@
-# 🎮 Choremon
+<div align="center">
 
-> **Turn chores into quests. Earn XP. Rule the leaderboard.**
+<img src="media/hero.png" alt="Chorémon — home screen, quest picker and family leaderboard" width="100%">
 
-Choremon is a gamified household chores app that uses AI to detect messes, generate quests, and reward you for keeping your space clean — complete with AR modes and an AI companion named **Rascal**.
+# Chorémon
 
-Built in 44 hours at Hack Indy 2026.
+**Turn chores into quests.** Point your camera at the mess — AI finds it, AR turns cleaning it into a game you actually want to finish.
 
-🌐 **Live Demo**: [choremon-six.vercel.app](https://choremon-six.vercel.app)
+[**Live app**](https://choremon-six.vercel.app) · [**Devpost**](https://devpost.com/software/choremon) · [**Pitch video**](https://www.youtube.com/watch?v=QNTnY8eavig)
 
-📝 **Devpost**: [devpost.com/software/choremon](https://devpost.com/software/choremon)
+![Platform](https://img.shields.io/badge/platform-Web%20%2B%20Android%20AR-5BC236)
+![Next.js](https://img.shields.io/badge/Next.js-14-black?logo=next.js)
+![React](https://img.shields.io/badge/React-19-61dafb?logo=react&logoColor=black)
+![Three.js](https://img.shields.io/badge/Three.js-WebXR-049ef4?logo=three.js&logoColor=white)
+![Unity](https://img.shields.io/badge/Unity-ARCore-000000?logo=unity)
+![AI](https://img.shields.io/badge/AI-Gemini%20API-8e75ff)
+![Hack Indy](https://img.shields.io/badge/Hack%20Indy-2026-f5a623)
+![Award](https://img.shields.io/badge/MLH-Best%20Use%20of%20Gemini%20API-3fb950)
 
-🎥 **Video Pitch**: [Choremon Pitch Video](https://youtu.be/QNTnY8eavig)
-
----
-
-## ✨ Features
-
-- 📸 **AI Room Scan** — Take a photo of your room; Gemini Vision detects the mess and generates a chore quest automatically
-- 🎯 **4 Chore Modes** — Vacuum/Sweep, Mop/Wipe, Trash/Declutter, and Laundry, each with their own quest flow and XP scaling
-- 🏆 **XP, Streaks & Leaderboard** — Complete quests to earn XP, build daily streaks, and compete on a family leaderboard
-- 🦝 **Rascal** — An AI companion voiced via ElevenLabs that reacts to your progress with emotion-tagged lines
-- 📱 **AR Modes** — WebXR browser-based floor cleaning mode + native Android AR via Unity (sweep-to-erase tile mechanic)
+</div>
 
 ---
 
-## 🔄 The Core Loop
+## What this is
 
-```
-Scan Room → Quest Activated → Complete Chore → Earn XP & Build Streak → Leaderboard Updated
-```
+Chorémon is a gamified chore app that turns a room into a quest board. No chore charts, no
+nagging, no manual logging — you point a camera at the mess and the game builds itself.
 
----
-
-## 🛠️ Tech Stack
-
-| Layer | Tech |
+| | |
 |---|---|
-| Frontend | Next.js 14, React 19, Tailwind CSS, Framer Motion |
-| Backend / DB | Supabase, Vercel |
-| AI / Vision | Gemini 2.0 Flash, Gemma 3 12b (Google AI SDK) |
-| AR (Web) | WebXR + Three.js |
-| AR (Native) | Unity 6 + AR Foundation 6.4.1 + ARCore XR Plugin 6.4.1 |
-| Voice | ElevenLabs (eleven_multilingual_v2, Finn voice) |
-| Fallback Chain | Gemini 2.0 Flash → FeatherlessAI → OpenRouter |
+| **The loop** | Scan the room → AI builds the quest → cleaning becomes AR gameplay → earn XP, keep your streak, climb the leaderboard |
+| **AI vision** | Gemini API primary, with a resilient fallback chain (Featherless Gemma → OpenRouter → NVIDIA Nemotron) plus an on-device TensorFlow.js COCO-SSD path |
+| **AR — Coin Mode** | WebXR + Three.js: coins are anchored to your real floor with a hit-test; you physically walk around collecting them while you clean |
+| **AR — Tile Mode** | Unity + ARCore (Android): the floor is mapped into a tile grid and cleaned in real time as you vacuum over it |
+| **Companion** | Rascal — a snarky raccoon with an ElevenLabs voice, emotion-tagged lines and idle detection |
+| **Built at** | Hack Indy 2026 — MLH **Best Use of Gemini API** 🏅 |
 
----
+## The four quests
 
-## 🚀 Getting Started
+| Quest | Mechanic |
+|---|---|
+| <img src="public/vacuum.png" width="28"> **Vacuum / Sweep** | Scan the room → AR coins scatter across the floor → collect them all while you clean (Coin Mode), or map the floor and clear the tile grid (Tile Mode) |
+| <img src="public/mop.png" width="28"> **Mop / Wipe** | Same two AR modes, tuned for surfaces and corners |
+| <img src="public/trash.png" width="28"> **Trash / Declutter** | Photograph the mess → the AI vision pipeline returns a checklist of items with confidence (a trash bin is never listed as trash) → tick them off or dismiss |
+| <img src="public/laundry.png" width="28"> **Laundry** | An 8-step checklist from sorting to putting clothes away, with per-step XP and Rascal commentary |
 
-### Prerequisites
+After every quest: XP, streak multiplier, and the family leaderboard — which, for kids and
+roommates, is the whole point.
 
-- Node.js 18+
-- A Supabase project
-- Gemini API key
-- ElevenLabs API key (for Rascal voice)
+## How the AI sees the mess
 
-### Installation
+Every camera frame is base64-encoded and classified live — no manual input.
+
+```text
+photo ──► Gemini API (primary)
+            │ failure
+            ▼
+      Featherless AI (fine-tuned Gemma)
+            │ failure
+            ▼
+      OpenRouter (same Gemma, routed)
+            │ failure
+            ▼
+      NVIDIA Nemotron VL models (object detection / classification layer)
+            │ failure
+            ▼
+      graceful mock data so the demo never dies
+```
+
+Responses are constrained to raw JSON (item ids, labels, locations, XP, a roast line), with
+client- and server-side parsing that strips markdown fences before `JSON.parse`. Every fallback
+exists because the hardest lesson of this build was that a chain of five models has five ways
+to fail.
+
+## Rascal, the companion
+
+- **Voice:** ElevenLabs `eleven_multilingual_v2` (Finn voice), stability 0.35, similarity 0.75,
+  style 0.6, speaker boost on — driven per line from the `rascal-speak` route.
+- **Emotion tags:** lines carry inline tags like `[annoyed]`, `[sarcastic]`, `[sighs heavily]`
+  that are passed raw to the voice model.
+- **Never repeats:** lines are pre-written per category (greeting, laundry, trash, sweeping,
+  dishes, idle) and tracked in a set until a category is exhausted.
+- **He notices:** the first quip lands 8–15 s after a chore starts, then every 25–60 s — and if
+  the `devicemotion` API sees acceleration drop below 1.5 for 12 s, Rascal calls you out.
+- **SFX:** coin collection and quest fanfares are synthesized with Web Audio API oscillators at
+  zero latency.
+
+## Run it locally
 
 ```bash
-git clone https://github.com/your-username/choremon.git
+git clone https://github.com/pfarell/choremon.git
 cd choremon
 npm install
+cp .env.example .env.local     # fill in your keys
+npm run dev                    # http://localhost:3000
 ```
 
-### Environment Variables
+| Variable | Used by |
+|---|---|
+| `GEMINI_API_KEY` (+ optional `GEMINI_API_KEYS`) | primary vision + chat |
+| `NEXT_PUBLIC_GEMINI_API_KEY` | client-side Multimodal Live |
+| `ELEVENLABS_API_KEY` | Rascal's voice |
+| `OPENROUTER_API_KEY`, `FEATHERLESS_API_KEY` | trash-detection fallbacks |
+| `OPENAI_API_KEY` | optional vision route |
 
-Create a `.env.local` file in the root:
-
-```env
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-GEMINI_API_KEY=your_gemini_api_key
-ELEVENLABS_API_KEY=your_elevenlabs_api_key
-OPENROUTER_API_KEY=your_openrouter_api_key
-FEATHERLESS_API_KEY=your_featherless_api_key
-```
-
-### Run Locally
+Check connectivity for every service at once:
 
 ```bash
-npm run dev
+node tools/check-apis.mjs
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Deploy
 
-### Deploy
+- **Web app** — Vercel (Next.js 14 App Router). Set the env vars above in the project settings,
+  then `vercel --prod` or connect the repo.
+- **Tile Mode APK** — build the Unity/ARCore scene for Android and sideload it on the demo
+  device. The web app hands off with `choremon://ar?mode=tile`; Unity reads
+  `Application.absoluteURL` and returns coverage data on completion so XP can be awarded.
 
-The app is deployed via Vercel and linked to this GitHub repo. Push to `main` to trigger a deployment:
+## Engineering record
 
-```bash
-git add .
-git commit -m "your message"
-git push origin main
-```
+The full decision log — AR platform evaluation, the deep-link handoff, tile-coverage math,
+the voice architecture and the honest limits — lives in [docs/ENGINEERING.md](docs/ENGINEERING.md).
 
----
+## Team
 
-## 📱 Android AR (Unity)
+Built in 44 hours at **Hack Indy 2026** by:
 
-The native Android AR mode is a separate Unity project using AR Foundation + ARCore. It receives a deep link from the web app and launches the sweep-to-erase tile mechanic.
+- [Praditya Farell](https://github.com/pfarell) — AR modes, web app, AI pipeline
+- [Winner R. Rasendriya](https://github.com/winnrras) — AI pipeline, Unity/ARCore, web app
 
-To build the APK:
-1. Open the Unity project in Unity 6
-2. Ensure **AR Foundation 6.4.1** and **Google ARCore XR Plugin 6.4.1** are installed
-3. Build for Android via `File → Build Settings`
+## Honest limits
 
----
-
-## 🗺️ Future Work
-
-- [ ] iOS ARKit support (native build)
-- [ ] Family invite system
-- [ ] Room profiles
-- [ ] Real-world brand reward partnerships (e.g. free ice cream for XP milestones)
-- [ ] Virtual companion upgrades
-- [ ] Streak multipliers
-- [ ] Snap Spectacles / Even G2 AR integration
-
----
+- **iOS:** WebXR needs Mozilla's experimental *XRViewer* app (no MacBook in the team → no
+  ARKit build). Android browsers run Coin Mode natively.
+- **Tile Mode is Android-only** — it ships as a sideloaded Unity APK, not on the web.
+- **Keys:** the hosted demo runs on the authors' keys; when quotas run out it degrades to mock
+  data by design. Running locally needs your own keys.
+- **No license file yet** — this is a co-authored hackathon project; please talk to the authors
+  before reuse.

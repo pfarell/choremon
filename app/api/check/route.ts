@@ -2,9 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const API_KEYS = [
   process.env.GEMINI_API_KEY,
-  'REDACTED_PLACEHOLDER_KEY',
-  'REDACTED_PLACEHOLDER_KEY',
-  'REDACTED_PLACEHOLDER_KEY',
+  ...(process.env.GEMINI_API_KEYS || '').split(',').map((k) => k.trim()),
 ].filter(Boolean) as string[];
 
 interface RemainingItem {
