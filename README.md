@@ -127,7 +127,7 @@ the voice architecture and the honest limits — lives in [docs/ENGINEERING.md](
 Built in 44 hours at **Hack Indy 2026** by:
 
 - [Praditya Farell](https://github.com/pfarell) — AR modes, web app, AI pipeline
-- [Winner R. Rasendriya](https://github.com/winnrras) — AI pipeline, Unity/ARCore, web app
+- [Winner R. Rasendriya](https://github.com/winnrras) — Unity/ARCore
 
 ## Honest limits
 
